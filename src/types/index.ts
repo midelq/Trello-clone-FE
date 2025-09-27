@@ -9,6 +9,7 @@ export interface Card {
   title: string;
   description: string;
   createdAt: string;
+  index?: number;
 }
 
 export interface List {
@@ -16,6 +17,7 @@ export interface List {
   title: string;
   cards: Card[];
   boardId: string;
+  index?: number;
 }
 
 export type ListType = 'todo' | 'in-progress' | 'done';

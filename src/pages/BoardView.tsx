@@ -3,6 +3,8 @@ import { useParams, Navigate } from 'react-router-dom';
 import type { Board, List as ListType, Card } from '../types';
 import List from '../components/List';
 import Navbar from '../components/Navbar';
+import { DragDropContext } from '@hello-pangea/dnd';
+import type { DropResult } from '@hello-pangea/dnd';
 import { useUser } from '../contexts/UserContext';
 
 const BoardView: React.FC = () => {
@@ -119,62 +121,118 @@ const BoardView: React.FC = () => {
     }
   };
 
-  return (
+  const handleDragEnd = (result: DropResult) => {
+    const { destination, source, draggableId, type } = result;
 
-<>
+    if (!destination) {
+      return;
+    }
+
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    ) {
+      return;
+    }
+
+    // Якщо перетягуємо картку
+    if (type === 'card') {
+      const sourceList = lists.find(list => list.id === source.droppableId);
+      const destList = lists.find(list => list.id === destination.droppableId);
+      
+      if (!sourceList || !destList) return;
+
+      if (source.droppableId === destination.droppableId) {
+        // Перетягування в межах одного списку
+        const newCards = Array.from(sourceList.cards);
+        const [movedCard] = newCards.splice(source.index, 1);
+        newCards.splice(destination.index, 0, movedCard);
+
+        const newList = {
+          ...sourceList,
+          cards: newCards
+        };
+
+        setLists(lists.map(list =>
+          list.id === newList.id ? newList : list
+        ));
+      } else {
+        // Перетягування між різними списками
+        const sourceCards = Array.from(sourceList.cards);
+        const destCards = Array.from(destList.cards);
+        const [movedCard] = sourceCards.splice(source.index, 1);
+        destCards.splice(destination.index, 0, movedCard);
+
+        setLists(lists.map(list => {
+          if (list.id === source.droppableId) {
+            return { ...list, cards: sourceCards };
+          }
+          if (list.id === destination.droppableId) {
+            return { ...list, cards: destCards };
+          }
+          return list;
+        }));
+      }
+    }
+  };
+
+  return (
+    <>
       <Navbar username={user.email} />
       <div className="min-h-screen min-w-full bg-[#6366F1] p-6" style={{ minWidth: 'fit-content' }}>
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-white">{board?.title || 'Board View'}</h1>
         </div>
 
-        <div className="flex space-x-4 overflow-x-auto pb-4 px-2" style={{ minWidth: 'max-content', position: 'relative' }}>
-          {lists.map((list) => (
-            <List
-              key={list.id}
-              list={list}
-              onAddCard={handleAddCard}
-              onEditCard={handleEditCard}
-              onDeleteCard={handleDeleteCard}
-              onEditTitle={handleEditListTitle}
-              onDeleteList={handleDeleteList}
-            />
-          ))}
-          
-          {isAddingList ? (
-            <div className="bg-white rounded-lg w-80 p-4 flex-shrink-0">
-              <input
-                type="text"
-                placeholder="Введіть назву списку..."
-                value={newListTitle}
-                onChange={(e) => setNewListTitle(e.target.value)}
-                className="w-full mb-2 px-4 py-2 bg-white border border-gray-200 rounded-md text-gray-900 shadow-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-500 focus:outline-none"
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <div className="flex space-x-4 overflow-x-auto pb-4 px-2" style={{ minWidth: 'max-content', position: 'relative' }}>
+            {lists.map((list, index) => (
+              <List
+                key={list.id}
+                list={list}
+                index={index}
+                onAddCard={handleAddCard}
+                onEditCard={handleEditCard}
+                onDeleteCard={handleDeleteCard}
+                onEditTitle={handleEditListTitle}
+                onDeleteList={handleDeleteList}
               />
-              <div className="flex justify-end space-x-2">
-                <button
-                  onClick={() => setIsAddingList(false)}
-                  className="px-3 py-1 bg-purple-600 text-white rounded-md hover:bg-purple-700"
-                >
-                  Скасувати
-                </button>
-                <button
-                  onClick={handleAddList}
-                  className="px-3 py-1 bg-purple-600 text-white rounded-md hover:bg-purple-700"
-                >
-                  Додати
-                </button>
+            ))}
+            {isAddingList ? (
+              <div className="bg-white rounded-lg w-80 p-4 flex-shrink-0">
+                <input
+                  type="text"
+                  placeholder="Назва списку"
+                  value={newListTitle}
+                  onChange={(e) => setNewListTitle(e.target.value)}
+                  className="w-full mb-2 px-4 py-2 bg-white border border-gray-200 rounded-md text-gray-900 shadow-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-500 focus:outline-none"
+                />
+                <div className="flex justify-end space-x-2">
+                  <button
+                    onClick={() => setIsAddingList(false)}
+                    className="px-3 py-1 bg-purple-600 text-white rounded-md hover:bg-purple-700"
+                  >
+                    Скасувати
+                  </button>
+                  <button
+                    onClick={handleAddList}
+                    className="px-3 py-1 bg-purple-600 text-white rounded-md hover:bg-purple-700"
+                  >
+                    Додати
+                  </button>
+                </div>
               </div>
-            </div>
-          ) : (
-            <button
-              onClick={() => setIsAddingList(true)}
-              className="bg-white/20 hover:bg-white/30 rounded-lg w-80 p-4 flex items-center justify-center text-white flex-shrink-0 border border-white/30"
-            >
-              <span className="text-2xl mr-2">+</span>
-              Додати новий список
-            </button>
-          )}
-        </div>
+            ) : (
+              <button
+                onClick={() => setIsAddingList(true)}
+                className="bg-white/30 hover:bg-white/40 transition-colors duration-200 rounded-lg w-80 p-4 flex items-center justify-center gap-2 text-white"
+              >
+                <span className="text-2xl">+</span>
+                <span>Додати список</span>
+              </button>
+            )}
+          </div>
+        </DragDropContext>
       </div>
     </>
   );

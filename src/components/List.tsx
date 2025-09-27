@@ -1,9 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import type { List as ListType, Card } from '../types';
 import ListCard from './ListCard';
+import { Droppable } from '@hello-pangea/dnd';
 
 interface ListProps {
   list: ListType;
+  index: number;
   onAddCard: (listId: string, card: Omit<Card, 'id' | 'createdAt'>) => void;
   onEditCard: (listId: string, card: Card) => void;
   onDeleteCard: (listId: string, cardId: string) => void;
@@ -11,7 +13,7 @@ interface ListProps {
   onDeleteList: (listId: string) => void;
 }
 
-const List: React.FC<ListProps> = ({ list, onAddCard, onEditCard, onDeleteCard, onEditTitle, onDeleteList }) => {
+const List: React.FC<ListProps> = ({ list, index, onAddCard, onEditCard, onDeleteCard, onEditTitle, onDeleteList }) => {
   const [isAddingCard, setIsAddingCard] = useState(false);
   const [newCardTitle, setNewCardTitle] = useState('');
   const [newCardDescription, setNewCardDescription] = useState('');
@@ -145,16 +147,26 @@ const List: React.FC<ListProps> = ({ list, onAddCard, onEditCard, onDeleteCard, 
         </div>
       </div>
 
-      <div className="space-y-2">
-        {list.cards.map((card) => (
-          <ListCard
-            key={card.id}
-            card={card}
-            onEdit={(editedCard) => onEditCard(list.id, editedCard)}
-            onDelete={(cardId) => onDeleteCard(list.id, cardId)}
-          />
-        ))}
-      </div>
+      <Droppable droppableId={list.id} type="card">
+        {(provided, snapshot) => (
+          <div
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+            className={`space-y-2 min-h-[50px] ${snapshot.isDraggingOver ? 'bg-purple-50' : ''}`}
+          >
+            {list.cards.map((card, index) => (
+              <ListCard
+                key={card.id}
+                card={card}
+                index={index}
+                onEdit={(editedCard) => onEditCard(list.id, editedCard)}
+                onDelete={(cardId) => onDeleteCard(list.id, cardId)}
+              />
+            ))}
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
 
       {isAddingCard ? (
         <div className="mt-4">
