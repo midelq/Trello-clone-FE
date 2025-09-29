@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import type { List as ListType, Card } from '../types';
 import ListCard from './ListCard';
-import { Droppable } from '@hello-pangea/dnd';
+import { Droppable, Draggable } from '@hello-pangea/dnd';
 
 interface ListProps {
   list: ListType;
@@ -65,7 +65,16 @@ const List: React.FC<ListProps> = ({ list, index, onAddCard, onEditCard, onDelet
   };
 
   return (
-    <div className="bg-white rounded-lg w-80 p-4 flex-shrink-0 relative">
+    <Draggable draggableId={list.id} index={index}>
+      {(provided, snapshot) => (
+        <div
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+          className={`bg-white rounded-lg w-80 p-4 flex-shrink-0 relative transition-all duration-200 ${
+            snapshot.isDragging ? 'shadow-2xl ring-2 ring-purple-500 scale-105' : 'shadow-md hover:shadow-lg'
+          }`}
+        >
       <div className="flex justify-between items-center mb-4">
         <div className="flex-1 mr-2">
           {isEditingTitle ? (
@@ -211,6 +220,8 @@ const List: React.FC<ListProps> = ({ list, index, onAddCard, onEditCard, onDelet
         </div>
       )}
     </div>
+      )}
+    </Draggable>
   );
 };
 

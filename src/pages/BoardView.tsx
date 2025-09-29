@@ -3,8 +3,8 @@ import { useParams, Navigate } from 'react-router-dom';
 import type { Board, List as ListType, Card } from '../types';
 import List from '../components/List';
 import Navbar from '../components/Navbar';
-import { DragDropContext } from '@hello-pangea/dnd';
-import type { DropResult } from '@hello-pangea/dnd';
+import { DragDropContext, Droppable } from '@hello-pangea/dnd';
+import type { DropResult, DroppableProvided, DroppableStateSnapshot } from '@hello-pangea/dnd';
 import { useUser } from '../contexts/UserContext';
 
 const BoardView: React.FC = () => {
@@ -135,6 +135,15 @@ const BoardView: React.FC = () => {
       return;
     }
 
+    // Якщо перетягуємо список
+    if (type === 'list') {
+      const newLists = Array.from(lists);
+      const [movedList] = newLists.splice(source.index, 1);
+      newLists.splice(destination.index, 0, movedList);
+      setLists(newLists);
+      return;
+    }
+
     // Якщо перетягуємо картку
     if (type === 'card') {
       const sourceList = lists.find(list => list.id === source.droppableId);
@@ -185,8 +194,17 @@ const BoardView: React.FC = () => {
         </div>
 
         <DragDropContext onDragEnd={handleDragEnd}>
-          <div className="flex space-x-4 overflow-x-auto pb-4 px-2" style={{ minWidth: 'max-content', position: 'relative' }}>
-            {lists.map((list, index) => (
+           <Droppable droppableId="lists" direction="horizontal" type="list">
+            {(provided: DroppableProvided, snapshot: DroppableStateSnapshot) => (
+              <div
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+                className={`flex space-x-4 overflow-x-auto pb-4 px-2 transition-colors duration-200 ${
+                  snapshot.isDraggingOver ? 'bg-purple-100/30 rounded-lg' : ''
+                }`}
+                style={{ minWidth: 'max-content', position: 'relative' }}
+              >
+                {lists.map((list, index) => (
               <List
                 key={list.id}
                 list={list}
@@ -231,7 +249,10 @@ const BoardView: React.FC = () => {
                 <span>Додати список</span>
               </button>
             )}
-          </div>
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
         </DragDropContext>
       </div>
     </>
