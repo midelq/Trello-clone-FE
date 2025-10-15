@@ -21,3 +21,16 @@ export interface List {
 }
 
 export type ListType = 'todo' | 'in-progress' | 'done';
+
+export interface Activity {
+  id: string;
+  type: 'card_added' | 'card_edited' | 'card_deleted' | 'card_moved' | 'list_added' | 'list_edited' | 'list_deleted';
+  timestamp: Date;
+  description: string;
+  metadata?: {
+    cardTitle?: string;
+    listTitle?: string;
+    fromList?: string;
+    toList?: string;
+  };
+}
