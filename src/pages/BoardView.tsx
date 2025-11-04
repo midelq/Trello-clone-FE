@@ -166,7 +166,7 @@ const BoardView: React.FC = () => {
   };
 
   const handleDeleteList = (listId: string) => {
-    if (window.confirm('Ви впевнені, що хочете видалити цей список? Усі картки в ньому також будуть видалені.')) {
+    if (window.confirm('Ви впеfвнені, що хочете видалити цей список? Усі картки в ньому також будуть видалені.')) {
       const list = lists.find(l => l.id === listId);
       if (list) {
         addActivity('list_deleted', `Видалено список "${list.title}" з ${list.cards.length} картками`, {
