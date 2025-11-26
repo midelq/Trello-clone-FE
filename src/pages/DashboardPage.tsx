@@ -4,7 +4,7 @@ import BoardCard from '../components/BoardCard';
 import CryptoPrices from '../components/CryptoPrices';
 import FearGreedIndex from '../components/FearGreedIndex';
 import Navbar from '../components/Navbar';
-import { useUser } from '../contexts/UserContext';
+import { useAuth } from '../contexts/AuthContext';
 import '../styles/auth.css';
 
 interface Board {
@@ -14,7 +14,7 @@ interface Board {
 }
 
 const DashboardPage: React.FC = () => {
-  const { user } = useUser();
+  const { user } = useAuth();
   const [isCreating, setIsCreating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editingBoardId, setEditingBoardId] = useState<string | null>(null);
@@ -59,18 +59,18 @@ const DashboardPage: React.FC = () => {
   const handleSaveBoard = () => {
     if (newBoardTitle.trim()) {
       if (isEditing && editingBoardId) {
-       
-        setBoards(boards.map(board => 
-          board.id === editingBoardId 
+
+        setBoards(boards.map(board =>
+          board.id === editingBoardId
             ? {
-                ...board,
-                title: newBoardTitle.trim(),
-                updatedAt: new Date().toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'short',
-                  day: 'numeric'
-                })
-              }
+              ...board,
+              title: newBoardTitle.trim(),
+              updatedAt: new Date().toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+              })
+            }
             : board
         ));
         setIsEditing(false);
@@ -112,12 +112,12 @@ const DashboardPage: React.FC = () => {
                   <h1 className="dashboard-title">Your Boards</h1>
                   <p className="dashboard-subtitle">You have {boards.length} boards</p>
                 </div>
-                <button 
+                <button
                   className="create-board-button mobile-full-width"
                   onClick={handleCreateBoard}
                 >
                   <svg viewBox="0 0 24 24" fill="currentColor" height="20" width="20">
-                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
                   </svg>
                   Create Board
                 </button>
@@ -144,13 +144,13 @@ const DashboardPage: React.FC = () => {
                       autoFocus
                     />
                     <div className="board-form-actions">
-                      <button 
+                      <button
                         className="board-save-button"
                         onClick={handleSaveBoard}
                       >
                         {isEditing ? 'Update' : 'Save'}
                       </button>
-                      <button 
+                      <button
                         className="board-cancel-button"
                         onClick={handleCancelCreate}
                       >
@@ -172,7 +172,7 @@ const DashboardPage: React.FC = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="dashboard-sidebar">
             <div className="crypto-widget">
               <h2 className="crypto-widget-title">Crypto Market</h2>

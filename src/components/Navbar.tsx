@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useUser } from '../contexts/UserContext';
+import { useAuth } from '../contexts/AuthContext';
 import '../styles/auth.css';
 
 interface NavbarProps {
@@ -11,11 +11,11 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ username, onActivityClick, activityCount = 0 }) => {
   const navigate = useNavigate();
-  const { setUser } = useUser();
+  const { logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleLogout = () => {
-    setUser(null);
+    logout();
     navigate('/');
   };
 
@@ -31,12 +31,12 @@ const Navbar: React.FC<NavbarProps> = ({ username, onActivityClick, activityCoun
         </Link>
         <button className="mobile-menu-button" onClick={toggleMenu}>
           <svg viewBox="0 0 24 24" fill="currentColor" height="24" width="24">
-            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
           </svg>
         </button>
         <div className={`user-info ${isMenuOpen ? 'show-mobile-menu' : ''}`}>
           {onActivityClick && (
-            <button 
+            <button
               onClick={onActivityClick}
               className="activity-button"
               style={{
@@ -86,7 +86,7 @@ const Navbar: React.FC<NavbarProps> = ({ username, onActivityClick, activityCoun
 
           <div className="user-avatar">
             <svg viewBox="0 0 24 24" fill="currentColor" height="20" width="20">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" />
             </svg>
           </div>
           <span className="navbar-user">{username}</span>
