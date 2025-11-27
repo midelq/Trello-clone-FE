@@ -6,7 +6,7 @@ import Navbar from '../components/Navbar';
 import ActivitySidebar from '../components/ActivitySidebar';
 import { DragDropContext, Droppable } from '@hello-pangea/dnd';
 import type { DropResult, DroppableProvided, DroppableStateSnapshot } from '@hello-pangea/dnd';
-import { useUser } from '../contexts/UserContext';
+import { useAuth } from '../contexts/AuthContext';
 import { apiClient } from '../utils/apiClient';
 import { API_CONFIG } from '../config/api.config';
 import type {
@@ -16,7 +16,7 @@ import type {
 } from '../types/api.types';
 
 const BoardView: React.FC = () => {
-  const { user } = useUser();
+  const { user } = useAuth();
   const { boardId } = useParams<{ boardId: string }>();
   const [lists, setLists] = useState<LocalList[]>([]);
   const [board, setBoard] = useState<LocalBoard | null>(null);
@@ -318,7 +318,7 @@ const BoardView: React.FC = () => {
                     key={list.id}
                     list={list}
                     index={index}
-                  onAddCard={handleAddCard}
+                    onAddCard={handleAddCard}
                     onEditCard={handleEditCard}
                     onDeleteCard={handleDeleteCard}
                     onEditTitle={handleEditListTitle}
