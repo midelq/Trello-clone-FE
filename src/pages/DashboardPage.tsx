@@ -1,36 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import BoardCard from '../components/BoardCard';
 import CryptoPrices from '../components/CryptoPrices';
 import FearGreedIndex from '../components/FearGreedIndex';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../contexts/AuthContext';
+import { apiClient } from '../utils/apiClient';
+import { API_CONFIG } from '../config/api.config';
+import type { Board, BoardsResponse, BoardResponse } from '../types/api.types';
 import '../styles/auth.css';
-
-interface Board {
-  id: string;
-  title: string;
-  updatedAt: string;
-}
 
 const DashboardPage: React.FC = () => {
   const { user } = useAuth();
   const [isCreating, setIsCreating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [editingBoardId, setEditingBoardId] = useState<string | null>(null);
+  const [editingBoardId, setEditingBoardId] = useState<number | null>(null);
   const [newBoardTitle, setNewBoardTitle] = useState('');
-  const [boards, setBoards] = useState<Board[]>([
-    {
-      id: '1',
-      title: 'Website Redesign',
-      updatedAt: 'Jan 20, 2024'
-    },
-    {
-      id: '2',
-      title: 'Mobile App Development',
-      updatedAt: 'Jan 22, 2024'
+  const [boards, setBoards] = useState<Board[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchBoards();
+  }, []);
+
+  const fetchBoards = async () => {
+    try {
+      setIsLoading(true);
+      const data = await apiClient.get<BoardsResponse>(API_CONFIG.ENDPOINTS.BOARDS.GET_ALL);
+      setBoards(data.boards);
+      setError(null);
+    } catch (err: any) {
+      setError(err.message || 'Failed to fetch boards');
+    } finally {
+      setIsLoading(false);
     }
-  ]);
+  };
 
   if (!user) {
     return <Navigate to="/" />;
@@ -50,46 +55,43 @@ const DashboardPage: React.FC = () => {
     setNewBoardTitle(board.title);
   };
 
-  const handleDeleteBoard = (boardId: string) => {
+  const handleDeleteBoard = async (boardId: number) => {
     if (window.confirm('Are you sure you want to delete this board?')) {
-      setBoards(boards.filter(board => board.id !== boardId));
+      try {
+        await apiClient.delete(API_CONFIG.ENDPOINTS.BOARDS.DELETE(boardId));
+        setBoards(boards.filter(board => board.id !== boardId));
+      } catch (err: any) {
+        alert(err.message || 'Failed to delete board');
+      }
     }
   };
 
-  const handleSaveBoard = () => {
+  const handleSaveBoard = async () => {
     if (newBoardTitle.trim()) {
-      if (isEditing && editingBoardId) {
+      try {
+        if (isEditing && editingBoardId) {
+          const response = await apiClient.put<BoardResponse>(
+            API_CONFIG.ENDPOINTS.BOARDS.UPDATE(editingBoardId),
+            { title: newBoardTitle.trim() }
+          );
 
-        setBoards(boards.map(board =>
-          board.id === editingBoardId
-            ? {
-              ...board,
-              title: newBoardTitle.trim(),
-              updatedAt: new Date().toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-              })
-            }
-            : board
-        ));
-        setIsEditing(false);
-        setEditingBoardId(null);
-      } else {
-        // Створюємо новий борд
-        const newBoard: Board = {
-          id: Date.now().toString(),
-          title: newBoardTitle.trim(),
-          updatedAt: new Date().toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric'
-          })
-        };
-        setBoards([...boards, newBoard]);
-        setIsCreating(false);
+          setBoards(boards.map(board =>
+            board.id === editingBoardId ? response.board : board
+          ));
+          setIsEditing(false);
+          setEditingBoardId(null);
+        } else {
+          const response = await apiClient.post<BoardResponse>(
+            API_CONFIG.ENDPOINTS.BOARDS.CREATE,
+            { title: newBoardTitle.trim() }
+          );
+          setBoards([...boards, response.board]);
+          setIsCreating(false);
+        }
+        setNewBoardTitle('');
+      } catch (err: any) {
+        alert(err.message || 'Failed to save board');
       }
-      setNewBoardTitle('');
     }
   };
 
@@ -98,6 +100,14 @@ const DashboardPage: React.FC = () => {
     setIsCreating(false);
     setIsEditing(false);
     setEditingBoardId(null);
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
   };
 
   return (
@@ -125,51 +135,57 @@ const DashboardPage: React.FC = () => {
             </div>
 
             <div className="dashboard-content">
-              <div className="boards-grid">
-                {(isCreating || isEditing) && (
-                  <div className="board-card create-board-form">
-                    <input
-                      type="text"
-                      className="board-title-input"
-                      placeholder="Enter board title..."
-                      value={newBoardTitle}
-                      onChange={(e) => setNewBoardTitle(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          handleSaveBoard();
-                        } else if (e.key === 'Escape') {
-                          handleCancelCreate();
-                        }
-                      }}
-                      autoFocus
-                    />
-                    <div className="board-form-actions">
-                      <button
-                        className="board-save-button"
-                        onClick={handleSaveBoard}
-                      >
-                        {isEditing ? 'Update' : 'Save'}
-                      </button>
-                      <button
-                        className="board-cancel-button"
-                        onClick={handleCancelCreate}
-                      >
-                        Cancel
-                      </button>
+              {error && <div className="error-message" style={{ color: 'red', marginBottom: '1rem' }}>{error}</div>}
+
+              {isLoading ? (
+                <div className="loading-spinner">Loading boards...</div>
+              ) : (
+                <div className="boards-grid">
+                  {(isCreating || isEditing) && (
+                    <div className="board-card create-board-form">
+                      <input
+                        type="text"
+                        className="board-title-input"
+                        placeholder="Enter board title..."
+                        value={newBoardTitle}
+                        onChange={(e) => setNewBoardTitle(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            handleSaveBoard();
+                          } else if (e.key === 'Escape') {
+                            handleCancelCreate();
+                          }
+                        }}
+                        autoFocus
+                      />
+                      <div className="board-form-actions">
+                        <button
+                          className="board-save-button"
+                          onClick={handleSaveBoard}
+                        >
+                          {isEditing ? 'Update' : 'Save'}
+                        </button>
+                        <button
+                          className="board-cancel-button"
+                          onClick={handleCancelCreate}
+                        >
+                          Cancel
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                )}
-                {boards.map((board) => (
-                  <BoardCard
-                    key={board.id}
-                    id={board.id}
-                    title={board.title}
-                    updatedAt={board.updatedAt}
-                    onEdit={() => handleEditBoard(board)}
-                    onDelete={() => handleDeleteBoard(board.id)}
-                  />
-                ))}
-              </div>
+                  )}
+                  {boards.map((board) => (
+                    <BoardCard
+                      key={board.id}
+                      id={board.id.toString()}
+                      title={board.title}
+                      updatedAt={formatDate(board.updatedAt)}
+                      onEdit={() => handleEditBoard(board)}
+                      onDelete={() => handleDeleteBoard(board.id)}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 

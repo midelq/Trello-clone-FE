@@ -155,9 +155,6 @@ export default function LoginPage() {
         </form>
         {message && <p className="auth-message" style={{ color: message.includes('success') ? 'green' : 'red' }}>{message}</p>}
       </div>
-      <p className="auth-demo-text">
-        Demo credentials: any email/password combination will work
-      </p>
     </div>
   );
 }

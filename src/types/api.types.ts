@@ -77,6 +77,17 @@ export interface BoardsResponse {
   boards: Board[];
 }
 
+// Повна структура дошки (з вкладеними списками та картками)
+export interface FullBoard extends Board {
+  lists: (List & {
+    cards: Card[];
+  })[];
+}
+
+export interface FullBoardResponse {
+  board: FullBoard;
+}
+
 // ============================================
 // LIST TYPES
 // ============================================
