@@ -71,7 +71,8 @@ const List: React.FC<ListProps> = ({ list, index, onAddCard, onEditCard, onDelet
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          className={`bg-white rounded-lg w-80 p-4 flex-shrink-0 relative transition-all duration-200 ${
+          style={provided.draggableProps.style}
+          className={`bg-white rounded-lg w-80 p-4 flex-shrink-0 relative transition-all duration-200 cursor-grab active:cursor-grabbing ${
             snapshot.isDragging ? 'shadow-2xl ring-2 ring-purple-500 scale-105' : 'shadow-md hover:shadow-lg'
           }`}
         >
@@ -156,7 +157,7 @@ const List: React.FC<ListProps> = ({ list, index, onAddCard, onEditCard, onDelet
         </div>
       </div>
 
-      <Droppable droppableId={list.id} type="card">
+      <Droppable droppableId={list.id} type="card" isDropDisabled={snapshot.isDragging}>
         {(provided, snapshot) => (
           <div
             ref={provided.innerRef}
