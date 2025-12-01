@@ -1,5 +1,4 @@
 import { API_CONFIG } from '../config/api.config';
-import type { ApiError } from '../types/api.types';
 
 
 export class ApiClient {
@@ -9,12 +8,12 @@ export class ApiClient {
     this.baseURL = API_CONFIG.BASE_URL;
   }
 
-  
+
   private getToken(): string | null {
     return localStorage.getItem(API_CONFIG.STORAGE_KEYS.TOKEN);
   }
 
- 
+
   private getHeaders(includeAuth: boolean = true): HeadersInit {
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
@@ -30,15 +29,17 @@ export class ApiClient {
     return headers;
   }
 
- 
+
   private async handleResponse<T>(response: Response): Promise<T> {
     const contentType = response.headers.get('content-type');
     const isJson = contentType?.includes('application/json');
 
     if (!response.ok) {
       if (isJson) {
-        const error: ApiError = await response.json();
-        throw new Error(error.message || 'Помилка запиту');
+        const errorData: any = await response.json();
+        // Беремо error або message з відповіді сервера
+        const errorMessage = errorData.error || errorData.message || 'Помилка запиту';
+        throw new Error(errorMessage);
       }
       throw new Error(`HTTP помилка! статус: ${response.status}`);
     }
@@ -65,7 +66,7 @@ export class ApiClient {
     }
   }
 
-  
+
   async post<T>(
     endpoint: string,
     data?: any,
@@ -85,7 +86,7 @@ export class ApiClient {
     }
   }
 
-  
+
   async put<T>(
     endpoint: string,
     data?: any,
@@ -105,7 +106,7 @@ export class ApiClient {
     }
   }
 
- 
+
   async delete<T>(endpoint: string, includeAuth: boolean = true): Promise<T> {
     try {
       const response = await fetch(`${this.baseURL}${endpoint}`, {

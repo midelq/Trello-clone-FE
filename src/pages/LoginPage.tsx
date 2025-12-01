@@ -33,6 +33,9 @@ export default function LoginPage() {
         if (!fullName || !email || !password || !confirmPassword) {
           throw new Error('Please fill in all fields.');
         }
+        if (password.length < 6) {
+          throw new Error('Password must be at least 6 characters long.');
+        }
         if (password !== confirmPassword) {
           throw new Error('Passwords do not match.');
         }
