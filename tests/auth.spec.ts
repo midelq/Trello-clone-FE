@@ -137,11 +137,45 @@ test.describe('Authentication', () => {
 
     await page.fill('input[placeholder*="Enter your full name"]', 'John Doe');
     await page.fill('input[type="email"]', 'john@example.com');
-    await page.fill('input[placeholder*="Enter your password"]', '123'); // Дуже короткий пароль
+    await page.fill('input[placeholder*="Enter your password"]', '123');
     await page.fill('input[placeholder*="Confirm your password"]', '123');
     await page.getByRole('button', { name: 'Create Account' }).click();
 
-    await expect(page.getByText(/password must be at least 6 characters/i)).toBeVisible();
+    await expect(page.getByText(/password must be at least 11111111 characters/i)).toBeVisible();
+  });
+
+
+  test('should save auth token to localStorage after login', async ({ page }) => {
+    await page.fill('input[type="email"]', 'test@example.com');
+    await page.fill('input[type="password"]', 'password123');
+    await page.getByRole('button', { name: 'Sign In' }).click();
+
+    await expect(page).toHaveURL('/dashboard');
+
+    const token = await page.evaluate(() => localStorage.getItem('trello_auth_token'));
+    expect(token).toBe('fake-jwt-token');
+  });
+
+  test('should redirect to login when accessing dashboard without auth', async ({ page }) => {
+    await page.goto('/');
+    await page.evaluate(() => localStorage.clear());
+
+    await page.goto('/dashboard');
+
+    await expect(page).toHaveURL('/');
+  });
+
+  test('should logout and clear localStorage', async ({ page }) => {
+    await page.fill('input[type="email"]', 'test@example.com');
+    await page.fill('input[type="password"]', 'password123');
+    await page.getByRole('button', { name: 'Sign In' }).click();
+    await expect(page).toHaveURL('/dashboard');
+
+    await page.getByRole('button', { name: /logout|sign out/i }).click();
+
+    await expect(page).toHaveURL('/');
+
+    const token = await page.evaluate(() => localStorage.getItem('trello_auth_token'));
+    expect(token).toBeNull();
   });
 });
-
