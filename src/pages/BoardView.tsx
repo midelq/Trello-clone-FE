@@ -106,7 +106,7 @@ const BoardView: React.FC = () => {
         setNewListTitle('');
         setIsAddingList(false);
 
-        addActivity('list_added', `Створено новий список "${newList.title}"`, {
+        addActivity('list_added', `Created new list "${newList.title}"`, {
           listTitle: newList.title
         });
       } catch (err: any) {
@@ -132,7 +132,7 @@ const BoardView: React.FC = () => {
   };
 
   const handleDeleteList = async (listId: string) => {
-    if (window.confirm('Ви впевнені, що хочете видалити цей список?')) {
+    if (window.confirm('Are you sure you want to delete this list?')) {
       try {
         await apiClient.delete(API_CONFIG.ENDPOINTS.LISTS.DELETE(Number(listId)));
         setLists(lists.filter(list => list.id !== listId));
@@ -168,7 +168,7 @@ const BoardView: React.FC = () => {
           : l
       ));
 
-      addActivity('card_added', `Додано картку "${newCard.title}"`, {
+      addActivity('card_added', `Added card "${newCard.title}"`, {
         cardTitle: newCard.title,
         listTitle: list.title
       });
@@ -329,7 +329,7 @@ const BoardView: React.FC = () => {
                   <div className="bg-white rounded-lg w-80 p-4 flex-shrink-0">
                     <input
                       type="text"
-                      placeholder="Назва списку"
+                      placeholder="List title"
                       value={newListTitle}
                       onChange={(e) => setNewListTitle(e.target.value)}
                       className="w-full mb-2 px-4 py-2 bg-white border border-gray-200 rounded-md text-gray-900 shadow-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-500 focus:outline-none"
@@ -339,13 +339,13 @@ const BoardView: React.FC = () => {
                         onClick={() => setIsAddingList(false)}
                         className="px-3 py-1 bg-purple-600 text-white rounded-md hover:bg-purple-700"
                       >
-                        Скасувати
+                        Cancel
                       </button>
                       <button
                         onClick={handleAddList}
                         className="px-3 py-1 bg-purple-600 text-white rounded-md hover:bg-purple-700"
                       >
-                        Додати
+                        Add
                       </button>
                     </div>
                   </div>
@@ -355,7 +355,7 @@ const BoardView: React.FC = () => {
                     className="bg-white/30 hover:bg-white/40 transition-colors duration-200 rounded-lg w-80 p-4 flex items-center justify-center gap-2 text-white"
                   >
                     <span className="text-2xl">+</span>
-                    <span>Додати список</span>
+                    <span>Add list</span>
                   </button>
                 )}
                 {provided.placeholder}

@@ -136,7 +136,7 @@ const List: React.FC<ListProps> = ({ list, index, onAddCard, onEditCard, onDelet
                     <svg className="w-4 h-4 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                     </svg>
-                    Редагувати
+                    Edit
                   </button>
                   <button
                     onClick={() => {
@@ -148,7 +148,7 @@ const List: React.FC<ListProps> = ({ list, index, onAddCard, onEditCard, onDelet
                     <svg className="w-4 h-4 mr-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                     </svg>
-                    Видалити
+                    Delete
                   </button>
                 </div>
               </div>
@@ -182,13 +182,13 @@ const List: React.FC<ListProps> = ({ list, index, onAddCard, onEditCard, onDelet
         <div className="mt-4">
           <input
             type="text"
-            placeholder="Назва картки"
+            placeholder="Card title"
             value={newCardTitle}
             onChange={(e) => setNewCardTitle(e.target.value)}
             className="w-full mb-2 px-4 py-2 bg-white border border-gray-200 rounded-md text-gray-900 shadow-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-500 focus:outline-none"
           />
           <textarea
-            placeholder="Опис картки"
+            placeholder="Card description"
             value={newCardDescription}
             onChange={(e) => setNewCardDescription(e.target.value)}
             className="w-full mb-3 px-4 py-2 bg-white border border-gray-200 rounded-md text-gray-900 shadow-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-500 focus:outline-none resize-none"
@@ -199,13 +199,13 @@ const List: React.FC<ListProps> = ({ list, index, onAddCard, onEditCard, onDelet
               onClick={() => setIsAddingCard(false)}
               className="px-3 py-1 bg-purple-600 text-white rounded-md hover:bg-purple-700"
             >
-              Скасувати
+            Cancel
             </button>
             <button
               onClick={handleAddCard}
               className="px-3 py-1 bg-purple-600 text-white rounded-md hover:bg-purple-700"
             >
-              Додати
+            Add
             </button>
           </div>
         </div>
@@ -216,7 +216,7 @@ const List: React.FC<ListProps> = ({ list, index, onAddCard, onEditCard, onDelet
             className="w-full h-8 bg-white rounded-md flex items-center justify-center gap-2"
           >
             <span className="text-purple-500 text-xl">+</span>
-            <span className="text-gray-900">Додати картку</span>
+            <span className="text-gray-900">Add card</span>
           </button>
         </div>
       )}

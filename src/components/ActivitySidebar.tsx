@@ -36,10 +36,10 @@ const ActivitySidebar: React.FC<ActivitySidebarProps> = ({ activities, isOpen, o
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return 'щойно';
-    if (diffMins < 60) return `${diffMins} хв тому`;
-    if (diffHours < 24) return `${diffHours} год тому`;
-    if (diffDays < 7) return `${diffDays} дн тому`;
+  if (diffMins < 1) return 'just now';
+  if (diffMins < 60) return `${diffMins} min ago`;
+  if (diffHours < 24) return `${diffHours} h ago`;
+  if (diffDays < 7) return `${diffDays} d ago`;
     
     return new Date(date).toLocaleDateString('uk-UA', {
       month: 'short',
@@ -76,7 +76,7 @@ const ActivitySidebar: React.FC<ActivitySidebarProps> = ({ activities, isOpen, o
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
-            <h2 className="text-xl font-bold text-white">Активність</h2>
+            <h2 className="text-xl font-bold text-white">Activity</h2>
           </div>
 
           {/* Activity List */}
@@ -88,8 +88,8 @@ const ActivitySidebar: React.FC<ActivitySidebarProps> = ({ activities, isOpen, o
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                   </svg>
                 </div>
-                <p className="text-lg font-semibold text-white">Поки що немає активності</p>
-                <p className="text-sm mt-2 text-white/60">Дії з картками та списками відображатимуться тут</p>
+                <p className="text-lg font-semibold text-white">No activity yet</p>
+                <p className="text-sm mt-2 text-white/60">Actions with cards and lists will appear here</p>
               </div>
             ) : (
               <div className="space-y-3">
@@ -122,7 +122,7 @@ const ActivitySidebar: React.FC<ActivitySidebarProps> = ({ activities, isOpen, o
           <div className="p-4 border-t border-white/20 bg-black/10">
             <button
               onClick={() => {
-                if (window.confirm('Ви впевнені, що хочете очистити всю історію активності?')) {
+                if (window.confirm('Are you sure you want to clear all activity history?')) {
                   // This would be handled by parent component
                 }
               }}
@@ -131,7 +131,7 @@ const ActivitySidebar: React.FC<ActivitySidebarProps> = ({ activities, isOpen, o
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
               </svg>
-              Очистити історію
+              Clear history
             </button>
           </div>
         </div>
