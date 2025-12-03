@@ -116,18 +116,23 @@ const BoardView: React.FC = () => {
   };
 
   const handleEditListTitle = async (listId: string, newTitle: string) => {
+    const trimmedTitle = newTitle.trim();
+    if (!trimmedTitle) return;
+
+    // Optimistic UI update – change title immediately
+    setLists(prevLists =>
+      prevLists.map(list =>
+        list.id === listId ? { ...list, title: trimmedTitle } : list
+      )
+    );
+
     try {
       await apiClient.put(API_CONFIG.ENDPOINTS.LISTS.UPDATE(Number(listId)), {
-        title: newTitle.trim()
+        title: trimmedTitle
       });
-
-      setLists(lists.map(list =>
-        list.id === listId
-          ? { ...list, title: newTitle.trim() }
-          : list
-      ));
     } catch (err: any) {
       alert(err.message || 'Failed to update list');
+      // Optionally, we could refetch board data here to restore correct state
     }
   };
 
