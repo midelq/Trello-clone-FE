@@ -141,7 +141,7 @@ test.describe('Authentication', () => {
     await page.fill('input[placeholder*="Confirm your password"]', '123');
     await page.getByRole('button', { name: 'Create Account' }).click();
 
-    await expect(page.getByText(/password must be at least 11111111 characters/i)).toBeVisible();
+    await expect(page.getByText(/password must be at least 6 characters/i)).toBeVisible();
   });
 
 
