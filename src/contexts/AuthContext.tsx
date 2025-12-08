@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { apiClient } from '../utils/apiClient';
 import { API_CONFIG } from '../config/api.config';
-import type { User, LoginRequest, RegisterRequest, AuthResponse, MeResponse } from '../types/api.types';
+import type { User, LoginRequest, RegisterRequest, AuthResponse, MeResponse, ChangePasswordRequest, ChangePasswordResponse } from '../types/api.types';
 
 interface AuthContextType {
     user: User | null;
@@ -11,6 +11,7 @@ interface AuthContextType {
     login: (data: LoginRequest) => Promise<void>;
     register: (data: RegisterRequest) => Promise<void>;
     logout: () => void;
+    changePassword: (data: ChangePasswordRequest) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -58,6 +59,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(null);
     };
 
+    const changePassword = async (data: ChangePasswordRequest) => {
+        await apiClient.post<ChangePasswordResponse>(API_CONFIG.ENDPOINTS.AUTH.CHANGE_PASSWORD, data);
+    };
+
     return (
         <AuthContext.Provider value={{
             user,
@@ -65,7 +70,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             isLoading,
             login,
             register,
-            logout
+            logout,
+            changePassword
         }}>
             {children}
         </AuthContext.Provider>

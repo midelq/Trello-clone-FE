@@ -44,6 +44,18 @@ export interface MeResponse {
   user: User;
 }
 
+// Запит на зміну паролю
+export interface ChangePasswordRequest {
+  currentPassword: string;
+  newPassword: string;
+}
+
+// Відповідь на зміну паролю
+export interface ChangePasswordResponse {
+  message: string;
+}
+
+
 // ============================================
 // BOARD TYPES
 // ============================================

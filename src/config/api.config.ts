@@ -8,6 +8,7 @@ export const API_CONFIG = {
       LOGIN: '/api/auth/login',
       REGISTER: '/api/auth/register',
       ME: '/api/auth/me',
+      CHANGE_PASSWORD: '/api/auth/change-password',
     },
 
     BOARDS: {
