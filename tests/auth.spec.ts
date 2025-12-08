@@ -171,7 +171,9 @@ test.describe('Authentication', () => {
     await page.getByRole('button', { name: 'Sign In' }).click();
     await expect(page).toHaveURL('/dashboard');
 
-    await page.getByRole('button', { name: /logout|sign out/i }).click();
+    await page.locator('.user-menu-button').click();
+
+    await page.getByRole('button', { name: /logout/i }).click();
 
     await expect(page).toHaveURL('/');
 
