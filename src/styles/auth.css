@@ -252,6 +252,47 @@
   }
 }
 
+.auth-form .password-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.auth-form .password-input-wrapper .auth-input {
+  padding-right: 48px;
+}
+
+.auth-form .password-toggle-button {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  border-radius: 6px;
+}
+
+.auth-form .password-toggle-button:hover:not(:disabled) {
+  color: #667eea;
+  background: rgba(102, 126, 234, 0.1);
+}
+
+.auth-form .password-toggle-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.auth-form .password-toggle-button svg {
+  width: 20px;
+  height: 20px;
+}
+
 .auth-demo-text {
   text-align: center;
   color: rgba(255, 255, 255, 0.8);
