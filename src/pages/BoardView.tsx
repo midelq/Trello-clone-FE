@@ -303,9 +303,24 @@ const BoardView: React.FC = () => {
         onActivityClick={() => setIsSidebarOpen(true)}
         activityCount={activities.length}
       />
-      <div className="min-h-screen min-w-full bg-[#6366F1] p-6" style={{ minWidth: 'fit-content' }}>
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-white">{board?.title || 'Board View'}</h1>
+      <div className="min-h-screen min-w-full bg-[#6366F1] p-6" style={{ minWidth: 'fit-content', paddingTop: '100px' }}>
+        <div className="mb-6" style={{
+          background: 'rgba(255, 255, 255, 0.1)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '12px',
+          padding: '16px 24px',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+        }}>
+          <h1 style={{
+            fontSize: '28px',
+            fontWeight: '700',
+            color: 'white',
+            margin: 0,
+            letterSpacing: '-0.5px'
+          }}>
+            {board?.title || 'Board View'}
+          </h1>
         </div>
 
         <DragDropContext onDragEnd={handleDragEnd}>
