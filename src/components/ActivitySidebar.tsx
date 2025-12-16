@@ -21,7 +21,7 @@ const ActivitySidebar: React.FC<ActivitySidebarProps> = ({ activities, isOpen, o
       case 'list_added':
         return '📋';
       case 'list_edited':
-        return '✏️';
+        return '';
       case 'list_deleted':
         return '🗑️';
       default:
