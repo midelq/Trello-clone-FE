@@ -2,6 +2,21 @@
 
 A modern task management application built with React, TypeScript, and Tailwind CSS. This project implements a Trello-like board management system with drag-and-drop functionality, authentication, and real-time updates.
 
+## 🚀 Live Demo & Deployment
+
+This project is fully deployed and available for testing:
+
+| Component | Service | Status | Link |
+|-----------|---------|--------|------|
+| **Frontend** | [Cloudflare Pages](https://pages.cloudflare.com/) | 🟢 Live | [**Visit App**](https://trello-clone-fe.pages.dev) |
+| **Backend** | [Render](https://render.com/) | 🟡 Ready | *API Integration* |
+
+**Infrastructure Highlights:**
+- **CI/CD**: Automatic deployment pipeline configured via Cloudflare Pages.
+- **Performance**: Optimized Vite build serving static assets via global CDN.
+- **Security**: Environment variables used for secure API configuration.
+
+
 
 ## Tech Stack
 
