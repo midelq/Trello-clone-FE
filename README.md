@@ -9,7 +9,8 @@ This project is fully deployed and available for testing:
 | Component | Service | Status | Link |
 |-----------|---------|--------|------|
 | **Frontend** | [Cloudflare Pages](https://pages.cloudflare.com/) | 🟢 Live | [**Visit App**](https://trello-clone-fe.pages.dev) |
-| **Backend** | [Render](https://render.com/) | 🟡 Ready | *API Integration* |
+| **Frontend** | [Vercel](https://vercel.com/) | 🟢 Live | [**Visit App**](https://trello-clone-fe-nine.vercel.app/) |
+| **Backend** | [Vercel](https://vercel.com/) | � Live | [**API Root**](https://trello-clone-be-beryl.vercel.app/) |
 
 **Infrastructure Highlights:**
 - **CI/CD**: Automatic deployment pipeline configured via Cloudflare Pages.
