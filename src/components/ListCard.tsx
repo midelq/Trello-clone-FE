@@ -6,7 +6,7 @@ interface ListCardProps {
   card: Card;
   index: number;
   onEdit: (card: Card) => void;
-  onDelete: (cardId: string) => void;
+  onDelete: (cardId: number) => void;
 }
 
 const formatDate = (dateString: string) => {
@@ -33,7 +33,7 @@ const ListCard: React.FC<ListCardProps> = ({ card, index, onEdit, onDelete }) =>
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(card.title);
-  const [editDescription, setEditDescription] = useState(card.description);
+  const [editDescription, setEditDescription] = useState(card.description || '');
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -83,12 +83,12 @@ const ListCard: React.FC<ListCardProps> = ({ card, index, onEdit, onDelete }) =>
 
   const handleCancelEdit = () => {
     setEditTitle(card.title);
-    setEditDescription(card.description);
+    setEditDescription(card.description || '');
     setIsEditing(false);
   };
 
   return (
-    <Draggable draggableId={card.id} index={index}>
+    <Draggable draggableId={card.id.toString()} index={index}>
       {(provided, snapshot) => (
         <div
           ref={provided.innerRef}

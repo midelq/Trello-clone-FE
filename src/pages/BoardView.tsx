@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
-import type { Board as LocalBoard, List as LocalList, Card as LocalCard, Activity } from '../types';
+import type { Board as LocalBoard, ListWithCards as LocalList, Card as LocalCard, Activity } from '../types';
 import List from '../components/List';
 import Navbar from '../components/Navbar';
 import ActivitySidebar from '../components/ActivitySidebar';
@@ -41,31 +41,25 @@ const BoardView: React.FC = () => {
     try {
       setIsLoading(true);
       // Fetch Full Board Data (Board + Lists + Cards)
-      const response = await apiClient.get<FullBoardResponse>(API_CONFIG.ENDPOINTS.BOARDS.GET_FULL(Number(id)));
+      const numericId = Number(id);
+      const response = await apiClient.get<FullBoardResponse>(API_CONFIG.ENDPOINTS.BOARDS.GET_FULL(numericId));
       const { board: fullBoard } = response;
 
       setBoard({
-        id: fullBoard.id.toString(),
-        title: fullBoard.title,
+        ...fullBoard,
         updatedAt: new Date(fullBoard.updatedAt).toLocaleDateString()
       });
 
       // Map API Lists to Local Lists
       const mappedLists: LocalList[] = fullBoard.lists.map(list => ({
-        id: list.id.toString(),
-        title: list.title,
-        boardId: list.boardId.toString(),
-        index: list.position,
+        ...list,
         cards: list.cards.map(card => ({
-          id: card.id.toString(),
-          title: card.title,
+          ...card,
           description: card.description || '',
-          createdAt: card.createdAt,
-          index: card.position
-        })).sort((a, b) => (a.index || 0) - (b.index || 0))
+        })).sort((a, b) => (a.position || 0) - (b.position || 0))
       }));
 
-      setLists(mappedLists.sort((a, b) => (a.index || 0) - (b.index || 0)));
+      setLists(mappedLists.sort((a, b) => (a.position || 0) - (b.position || 0)));
     } catch (err: any) {
       setError(err.message || 'Failed to load board data');
       console.error(err);
@@ -76,9 +70,9 @@ const BoardView: React.FC = () => {
 
   const addActivity = (type: Activity['type'], description: string, metadata?: Activity['metadata']) => {
     const newActivity: Activity = {
-      id: Date.now().toString(),
+      id: Date.now(),
       type,
-      timestamp: new Date(),
+      timestamp: new Date().toISOString(),
       description,
       metadata
     };
@@ -95,11 +89,8 @@ const BoardView: React.FC = () => {
         });
 
         const newList: LocalList = {
-          id: response.list.id.toString(),
-          title: response.list.title,
+          ...response.list,
           cards: [],
-          boardId: response.list.boardId.toString(),
-          index: response.list.position
         };
 
         setLists([...lists, newList]);
@@ -115,7 +106,7 @@ const BoardView: React.FC = () => {
     }
   };
 
-  const handleEditListTitle = async (listId: string, newTitle: string) => {
+  const handleEditListTitle = async (listId: number, newTitle: string) => {
     const trimmedTitle = newTitle.trim();
     if (!trimmedTitle) return;
 
@@ -127,7 +118,7 @@ const BoardView: React.FC = () => {
     );
 
     try {
-      await apiClient.put(API_CONFIG.ENDPOINTS.LISTS.UPDATE(Number(listId)), {
+      await apiClient.put(API_CONFIG.ENDPOINTS.LISTS.UPDATE(listId), {
         title: trimmedTitle
       });
     } catch (err: any) {
@@ -136,10 +127,10 @@ const BoardView: React.FC = () => {
     }
   };
 
-  const handleDeleteList = async (listId: string) => {
+  const handleDeleteList = async (listId: number) => {
     if (window.confirm('Are you sure you want to delete this list?')) {
       try {
-        await apiClient.delete(API_CONFIG.ENDPOINTS.LISTS.DELETE(Number(listId)));
+        await apiClient.delete(API_CONFIG.ENDPOINTS.LISTS.DELETE(listId));
         setLists(lists.filter(list => list.id !== listId));
       } catch (err: any) {
         alert(err.message || 'Failed to delete list');
@@ -147,24 +138,21 @@ const BoardView: React.FC = () => {
     }
   };
 
-  const handleAddCard = async (listId: string, cardData: Omit<LocalCard, 'id' | 'createdAt'>) => {
+  const handleAddCard = async (listId: number, cardData: Partial<LocalCard>) => {
     try {
       const list = lists.find(l => l.id === listId);
       if (!list) return;
 
       const response = await apiClient.post<CardResponse>(API_CONFIG.ENDPOINTS.CARDS.CREATE, {
         title: cardData.title,
-        listId: Number(listId),
+        listId: listId,
         description: cardData.description,
         position: list.cards.length
       });
 
       const newCard: LocalCard = {
-        id: response.card.id.toString(),
-        title: response.card.title,
+        ...response.card,
         description: response.card.description || '',
-        createdAt: response.card.createdAt,
-        index: response.card.position
       };
 
       setLists(lists.map(l =>
@@ -182,9 +170,9 @@ const BoardView: React.FC = () => {
     }
   };
 
-  const handleEditCard = async (listId: string, editedCard: LocalCard) => {
+  const handleEditCard = async (listId: number, editedCard: LocalCard) => {
     try {
-      await apiClient.put(API_CONFIG.ENDPOINTS.CARDS.UPDATE(Number(editedCard.id)), {
+      await apiClient.put(API_CONFIG.ENDPOINTS.CARDS.UPDATE(editedCard.id), {
         title: editedCard.title,
         description: editedCard.description
       });
@@ -193,7 +181,7 @@ const BoardView: React.FC = () => {
         list.id === listId
           ? {
             ...list,
-            cards: list.cards.map(card =>
+            cards: list.cards.map((card: LocalCard) =>
               card.id === editedCard.id ? editedCard : card
             ),
           }
@@ -204,9 +192,9 @@ const BoardView: React.FC = () => {
     }
   };
 
-  const handleDeleteCard = async (listId: string, cardId: string) => {
+  const handleDeleteCard = async (listId: number, cardId: number) => {
     try {
-      await apiClient.delete(API_CONFIG.ENDPOINTS.CARDS.DELETE(Number(cardId)));
+      await apiClient.delete(API_CONFIG.ENDPOINTS.CARDS.DELETE(cardId));
 
       setLists(lists.map(list =>
         list.id === listId
@@ -232,7 +220,7 @@ const BoardView: React.FC = () => {
 
       // Update position in backend
       try {
-        await apiClient.put(API_CONFIG.ENDPOINTS.LISTS.UPDATE(Number(movedList.id)), {
+        await apiClient.put(API_CONFIG.ENDPOINTS.LISTS.UPDATE(movedList.id), {
           position: destination.index
         });
       } catch (err) {
@@ -242,8 +230,8 @@ const BoardView: React.FC = () => {
     }
 
     if (type === 'card') {
-      const sourceList = lists.find(list => list.id === source.droppableId);
-      const destList = lists.find(list => list.id === destination.droppableId);
+      const sourceList = lists.find(list => list.id.toString() === source.droppableId);
+      const destList = lists.find(list => list.id.toString() === destination.droppableId);
 
       if (!sourceList || !destList) return;
 
@@ -257,7 +245,7 @@ const BoardView: React.FC = () => {
         setLists(lists.map(list => list.id === newList.id ? newList : list));
 
         try {
-          await apiClient.put(API_CONFIG.ENDPOINTS.CARDS.UPDATE(Number(movedCard.id)), {
+          await apiClient.put(API_CONFIG.ENDPOINTS.CARDS.UPDATE(movedCard.id), {
             position: destination.index
           });
         } catch (err) {
@@ -271,14 +259,14 @@ const BoardView: React.FC = () => {
         destCards.splice(destination.index, 0, movedCard);
 
         setLists(lists.map(list => {
-          if (list.id === source.droppableId) return { ...list, cards: sourceCards };
-          if (list.id === destination.droppableId) return { ...list, cards: destCards };
+          if (list.id === sourceList.id) return { ...list, cards: sourceCards };
+          if (list.id === destList.id) return { ...list, cards: destCards };
           return list;
         }));
 
         try {
-          await apiClient.put(API_CONFIG.ENDPOINTS.CARDS.UPDATE(Number(movedCard.id)), {
-            listId: Number(destList.id),
+          await apiClient.put(API_CONFIG.ENDPOINTS.CARDS.UPDATE(movedCard.id), {
+            listId: destList.id,
             position: destination.index
           });
         } catch (err) {

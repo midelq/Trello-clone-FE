@@ -29,18 +29,18 @@ const ActivitySidebar: React.FC<ActivitySidebarProps> = ({ activities, isOpen, o
     }
   };
 
-  const formatTime = (date: Date) => {
+  const formatTime = (date: string) => {
     const now = new Date();
     const diffMs = now.getTime() - new Date(date).getTime();
     const diffMins = Math.floor(diffMs / 60000);
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-  if (diffMins < 1) return 'just now';
-  if (diffMins < 60) return `${diffMins} min ago`;
-  if (diffHours < 24) return `${diffHours} h ago`;
-  if (diffDays < 7) return `${diffDays} d ago`;
-    
+    if (diffMins < 1) return 'just now';
+    if (diffMins < 60) return `${diffMins} min ago`;
+    if (diffHours < 24) return `${diffHours} h ago`;
+    if (diffDays < 7) return `${diffDays} d ago`;
+
     return new Date(date).toLocaleDateString('uk-UA', {
       month: 'short',
       day: 'numeric',
@@ -61,9 +61,8 @@ const ActivitySidebar: React.FC<ActivitySidebarProps> = ({ activities, isOpen, o
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 right-0 h-full w-96 shadow-2xl z-50 transform transition-transform duration-300 ease-in-out ${
-          isOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}
+        className={`fixed top-0 right-0 h-full w-96 shadow-2xl z-50 transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'
+          }`}
         style={{
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
         }}

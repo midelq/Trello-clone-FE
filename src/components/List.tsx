@@ -1,16 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
-import type { List as ListType, Card } from '../types';
+import type { ListWithCards as ListType, Card } from '../types';
 import ListCard from './ListCard';
 import { Droppable, Draggable } from '@hello-pangea/dnd';
 
 interface ListProps {
   list: ListType;
   index: number;
-  onAddCard: (listId: string, card: Omit<Card, 'id' | 'createdAt'>) => void;
-  onEditCard: (listId: string, card: Card) => void;
-  onDeleteCard: (listId: string, cardId: string) => void;
-  onEditTitle: (listId: string, newTitle: string) => void;
-  onDeleteList: (listId: string) => void;
+  onAddCard: (listId: number, card: { title: string; description: string }) => void;
+  onEditCard: (listId: number, card: Card) => void;
+  onDeleteCard: (listId: number, cardId: number) => void;
+  onEditTitle: (listId: number, newTitle: string) => void;
+  onDeleteList: (listId: number) => void;
 }
 
 const List: React.FC<ListProps> = ({ list, index, onAddCard, onEditCard, onDeleteCard, onEditTitle, onDeleteList }) => {
@@ -65,7 +65,7 @@ const List: React.FC<ListProps> = ({ list, index, onAddCard, onEditCard, onDelet
   };
 
   return (
-    <Draggable draggableId={list.id} index={index}>
+    <Draggable draggableId={list.id.toString()} index={index}>
       {(provided, snapshot) => (
         <div
           ref={provided.innerRef}
@@ -157,7 +157,7 @@ const List: React.FC<ListProps> = ({ list, index, onAddCard, onEditCard, onDelet
             </div>
           </div>
 
-          <Droppable droppableId={list.id} type="card" isDropDisabled={snapshot.isDragging}>
+          <Droppable droppableId={list.id.toString()} type="card" isDropDisabled={snapshot.isDragging}>
             {(provided, snapshot) => (
               <div
                 ref={provided.innerRef}

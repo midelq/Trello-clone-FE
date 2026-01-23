@@ -177,7 +177,7 @@ const DashboardPage: React.FC = () => {
                   {boards.map((board) => (
                     <BoardCard
                       key={board.id}
-                      id={board.id.toString()}
+                      id={board.id}
                       title={board.title}
                       updatedAt={formatDate(board.updatedAt)}
                       onEdit={() => handleEditBoard(board)}

@@ -89,11 +89,8 @@ export interface BoardsResponse {
   boards: Board[];
 }
 
-// Повна структура дошки (з вкладеними списками та картками)
 export interface FullBoard extends Board {
-  lists: (List & {
-    cards: Card[];
-  })[];
+  lists: ListWithCards[];
 }
 
 export interface FullBoardResponse {
@@ -111,6 +108,10 @@ export interface List {
   boardId: number;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface ListWithCards extends List {
+  cards: Card[];
 }
 
 // Створення нового списку
@@ -173,8 +174,22 @@ export interface CardResponse {
   card: Card;
 }
 
-// Відповідь при отриманні карток списку
-export interface CardsResponse {
-  cards: Card[];
+// ============================================
+// ACTIVITY TYPES
+// ============================================
+
+export type ListType = 'todo' | 'in-progress' | 'done';
+
+export interface Activity {
+  id: number;
+  type: 'card_added' | 'card_edited' | 'card_deleted' | 'card_moved' | 'list_added' | 'list_edited' | 'list_deleted';
+  timestamp: string; // Changed to string to match JSON/backend format, usually Date handles it but string is safer for entities coming from API
+  description: string;
+  metadata?: {
+    cardTitle?: string;
+    listTitle?: string;
+    fromList?: string;
+    toList?: string;
+  };
 }
 
