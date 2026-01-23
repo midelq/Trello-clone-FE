@@ -1,6 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
-import BoardsPage from './pages/BoardsPage';
 import DashboardPage from './pages/DashboardPage';
 import BoardView from './pages/BoardView';
 import { AuthProvider } from './contexts/AuthContext';
@@ -17,9 +16,9 @@ function App() {
             <DashboardPage />
           </ProtectedRoute>
         } />
-        <Route path="/boards" element={
+        <Route path="/board/:boardId" element={
           <ProtectedRoute>
-            <BoardsPage />
+            <BoardView />
           </ProtectedRoute>
         } />
         <Route path="/board/:boardId" element={
