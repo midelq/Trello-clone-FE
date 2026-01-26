@@ -7,6 +7,7 @@ import ActivitySidebar from '../components/ActivitySidebar';
 import { DragDropContext, Droppable } from '@hello-pangea/dnd';
 import type { DropResult, DroppableProvided, DroppableStateSnapshot } from '@hello-pangea/dnd';
 import { useAuth } from '../contexts/AuthContext';
+import { useNotification } from '../contexts/NotificationContext';
 import { apiClient } from '../utils/apiClient';
 import { API_CONFIG } from '../config/api.config';
 import type {
@@ -17,6 +18,7 @@ import type {
 
 const BoardView: React.FC = () => {
   const { user } = useAuth();
+  const { showError } = useNotification();
   const { boardId } = useParams<{ boardId: string }>();
   const [lists, setLists] = useState<LocalList[]>([]);
   const [board, setBoard] = useState<LocalBoard | null>(null);
@@ -104,7 +106,7 @@ const BoardView: React.FC = () => {
         });
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to create list';
-        alert(errorMessage);
+        showError(errorMessage);
       }
     }
   };
@@ -126,7 +128,7 @@ const BoardView: React.FC = () => {
       });
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to update list';
-      alert(errorMessage);
+      showError(errorMessage);
       // Optionally, we could refetch board data here to restore correct state
     }
   };
@@ -138,7 +140,7 @@ const BoardView: React.FC = () => {
         setLists(lists.filter(list => list.id !== listId));
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to delete list';
-        alert(errorMessage);
+        showError(errorMessage);
       }
     }
   };
@@ -172,7 +174,7 @@ const BoardView: React.FC = () => {
       });
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to create card';
-      alert(errorMessage);
+      showError(errorMessage);
     }
   };
 
@@ -195,7 +197,7 @@ const BoardView: React.FC = () => {
       ));
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to update card';
-      alert(errorMessage);
+      showError(errorMessage);
     }
   };
 
@@ -210,7 +212,7 @@ const BoardView: React.FC = () => {
       ));
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to delete card';
-      alert(errorMessage);
+      showError(errorMessage);
     }
   };
 
@@ -219,6 +221,9 @@ const BoardView: React.FC = () => {
 
     if (!destination) return;
     if (destination.droppableId === source.droppableId && destination.index === source.index) return;
+
+    // Save previous state for rollback
+    const previousLists = [...lists];
 
     if (type === 'list') {
       const newLists = Array.from(lists);
@@ -232,7 +237,9 @@ const BoardView: React.FC = () => {
           position: destination.index
         });
       } catch (err) {
-        console.error('Failed to update list position', err);
+        // Revert to previous state
+        setLists(previousLists);
+        showError('Failed to move list. Please try again.');
       }
       return;
     }
@@ -257,7 +264,9 @@ const BoardView: React.FC = () => {
             position: destination.index
           });
         } catch (err) {
-          console.error('Failed to update card position', err);
+          // Revert to previous state
+          setLists(previousLists);
+          showError('Failed to reorder card. Please try again.');
         }
       } else {
         // Move to different list
@@ -278,7 +287,9 @@ const BoardView: React.FC = () => {
             position: destination.index
           });
         } catch (err) {
-          console.error('Failed to update card position', err);
+          // Revert to previous state
+          setLists(previousLists);
+          showError('Failed to move card. Please try again.');
         }
       }
     }

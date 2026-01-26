@@ -5,6 +5,7 @@ import CryptoPrices from '../components/CryptoPrices';
 import FearGreedIndex from '../components/FearGreedIndex';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../contexts/AuthContext';
+import { useNotification } from '../contexts/NotificationContext';
 import { apiClient } from '../utils/apiClient';
 import { API_CONFIG } from '../config/api.config';
 import type { Board, BoardsResponse, BoardResponse } from '../types/api.types';
@@ -12,6 +13,7 @@ import '../styles/auth.css';
 
 const DashboardPage: React.FC = () => {
   const { user } = useAuth();
+  const { showError } = useNotification();
   const [isCreating, setIsCreating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editingBoardId, setEditingBoardId] = useState<number | null>(null);
@@ -63,7 +65,7 @@ const DashboardPage: React.FC = () => {
         setBoards(boards.filter(board => board.id !== boardId));
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to delete board';
-        alert(errorMessage);
+        showError(errorMessage);
       }
     }
   };
@@ -93,7 +95,7 @@ const DashboardPage: React.FC = () => {
         setNewBoardTitle('');
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to save board';
-        alert(errorMessage);
+        showError(errorMessage);
       }
     }
   };
