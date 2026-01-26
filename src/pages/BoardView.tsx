@@ -28,6 +28,38 @@ const BoardView: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const fetchBoardData = async (id: string) => {
+      try {
+        setIsLoading(true);
+        // Fetch Full Board Data (Board + Lists + Cards)
+        const numericId = Number(id);
+        const response = await apiClient.get<FullBoardResponse>(API_CONFIG.ENDPOINTS.BOARDS.GET_FULL(numericId));
+        const { board: fullBoard } = response;
+
+        setBoard({
+          ...fullBoard,
+          updatedAt: new Date(fullBoard.updatedAt).toLocaleDateString()
+        });
+
+        // Map API Lists to Local Lists
+        const mappedLists: LocalList[] = fullBoard.lists.map(list => ({
+          ...list,
+          cards: list.cards.map(card => ({
+            ...card,
+            description: card.description || '',
+          })).sort((a, b) => (a.position || 0) - (b.position || 0))
+        }));
+
+        setLists(mappedLists.sort((a, b) => (a.position || 0) - (b.position || 0)));
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to load board data';
+        setError(errorMessage);
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     if (boardId) {
       fetchBoardData(boardId);
     }
@@ -37,38 +69,6 @@ const BoardView: React.FC = () => {
   if (!user) {
     return <Navigate to="/" />;
   }
-
-  const fetchBoardData = async (id: string) => {
-    try {
-      setIsLoading(true);
-      // Fetch Full Board Data (Board + Lists + Cards)
-      const numericId = Number(id);
-      const response = await apiClient.get<FullBoardResponse>(API_CONFIG.ENDPOINTS.BOARDS.GET_FULL(numericId));
-      const { board: fullBoard } = response;
-
-      setBoard({
-        ...fullBoard,
-        updatedAt: new Date(fullBoard.updatedAt).toLocaleDateString()
-      });
-
-      // Map API Lists to Local Lists
-      const mappedLists: LocalList[] = fullBoard.lists.map(list => ({
-        ...list,
-        cards: list.cards.map(card => ({
-          ...card,
-          description: card.description || '',
-        })).sort((a, b) => (a.position || 0) - (b.position || 0))
-      }));
-
-      setLists(mappedLists.sort((a, b) => (a.position || 0) - (b.position || 0)));
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to load board data';
-      setError(errorMessage);
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const addActivity = (type: Activity['type'], description: string, metadata?: Activity['metadata']) => {
     const newActivity: Activity = {
