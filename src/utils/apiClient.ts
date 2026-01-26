@@ -48,7 +48,13 @@ export class ApiClient {
       return await response.json();
     }
 
-    return {} as T;
+    // Handle 204 No Content (common for DELETE requests)
+    if (response.status === 204) {
+      return undefined as T;
+    }
+
+    // For other non-JSON responses, throw an error as this is unexpected
+    throw new Error(`Unexpected non-JSON response with status: ${response.status}`);
   }
 
 
