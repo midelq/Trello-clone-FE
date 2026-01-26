@@ -27,15 +27,16 @@ const BoardView: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  if (!user) {
-    return <Navigate to="/" />;
-  }
-
   useEffect(() => {
     if (boardId) {
       fetchBoardData(boardId);
     }
   }, [boardId]);
+
+  // Conditional rendering AFTER all hooks (React Rules of Hooks compliance)
+  if (!user) {
+    return <Navigate to="/" />;
+  }
 
   const fetchBoardData = async (id: string) => {
     try {
