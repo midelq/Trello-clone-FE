@@ -5,7 +5,9 @@
 export interface ApiError {
   error: string;
   message: string;
-  details?: any;
+  details?: unknown;
+  status?: number;
+  code?: string;
 }
 
 // ============================================

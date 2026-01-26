@@ -60,8 +60,9 @@ const BoardView: React.FC = () => {
       }));
 
       setLists(mappedLists.sort((a, b) => (a.position || 0) - (b.position || 0)));
-    } catch (err: any) {
-      setError(err.message || 'Failed to load board data');
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to load board data';
+      setError(errorMessage);
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -100,8 +101,9 @@ const BoardView: React.FC = () => {
         addActivity('list_added', `Created new list "${newList.title}"`, {
           listTitle: newList.title
         });
-      } catch (err: any) {
-        alert(err.message || 'Failed to create list');
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to create list';
+        alert(errorMessage);
       }
     }
   };
@@ -121,8 +123,9 @@ const BoardView: React.FC = () => {
       await apiClient.put(API_CONFIG.ENDPOINTS.LISTS.UPDATE(listId), {
         title: trimmedTitle
       });
-    } catch (err: any) {
-      alert(err.message || 'Failed to update list');
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to update list';
+      alert(errorMessage);
       // Optionally, we could refetch board data here to restore correct state
     }
   };
@@ -132,8 +135,9 @@ const BoardView: React.FC = () => {
       try {
         await apiClient.delete(API_CONFIG.ENDPOINTS.LISTS.DELETE(listId));
         setLists(lists.filter(list => list.id !== listId));
-      } catch (err: any) {
-        alert(err.message || 'Failed to delete list');
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to delete list';
+        alert(errorMessage);
       }
     }
   };
@@ -165,8 +169,9 @@ const BoardView: React.FC = () => {
         cardTitle: newCard.title,
         listTitle: list.title
       });
-    } catch (err: any) {
-      alert(err.message || 'Failed to create card');
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to create card';
+      alert(errorMessage);
     }
   };
 
@@ -187,8 +192,9 @@ const BoardView: React.FC = () => {
           }
           : list
       ));
-    } catch (err: any) {
-      alert(err.message || 'Failed to update card');
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to update card';
+      alert(errorMessage);
     }
   };
 
@@ -201,8 +207,9 @@ const BoardView: React.FC = () => {
           ? { ...list, cards: list.cards.filter(card => card.id !== cardId) }
           : list
       ));
-    } catch (err: any) {
-      alert(err.message || 'Failed to delete card');
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to delete card';
+      alert(errorMessage);
     }
   };
 

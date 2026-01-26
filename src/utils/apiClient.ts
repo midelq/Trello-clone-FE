@@ -1,4 +1,5 @@
 import { API_CONFIG } from '../config/api.config';
+import type { ApiError } from '../types/api.types';
 
 
 export class ApiClient {
@@ -36,8 +37,7 @@ export class ApiClient {
 
     if (!response.ok) {
       if (isJson) {
-        const errorData: any = await response.json();
-        // Беремо error або message з відповіді сервера
+        const errorData = (await response.json()) as Partial<ApiError>;
         const errorMessage = errorData.error || errorData.message || 'Помилка запиту';
         throw new Error(errorMessage);
       }
@@ -69,7 +69,7 @@ export class ApiClient {
 
   async post<T>(
     endpoint: string,
-    data?: any,
+    data?: unknown,
     includeAuth: boolean = true
   ): Promise<T> {
     try {
@@ -89,7 +89,7 @@ export class ApiClient {
 
   async put<T>(
     endpoint: string,
-    data?: any,
+    data?: unknown,
     includeAuth: boolean = true
   ): Promise<T> {
     try {

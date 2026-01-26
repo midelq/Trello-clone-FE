@@ -30,8 +30,9 @@ const DashboardPage: React.FC = () => {
       const data = await apiClient.get<BoardsResponse>(API_CONFIG.ENDPOINTS.BOARDS.GET_ALL);
       setBoards(data.boards);
       setError(null);
-    } catch (err: any) {
-      setError(err.message || 'Failed to fetch boards');
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch boards';
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -60,8 +61,9 @@ const DashboardPage: React.FC = () => {
       try {
         await apiClient.delete(API_CONFIG.ENDPOINTS.BOARDS.DELETE(boardId));
         setBoards(boards.filter(board => board.id !== boardId));
-      } catch (err: any) {
-        alert(err.message || 'Failed to delete board');
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to delete board';
+        alert(errorMessage);
       }
     }
   };
@@ -89,8 +91,9 @@ const DashboardPage: React.FC = () => {
           setIsCreating(false);
         }
         setNewBoardTitle('');
-      } catch (err: any) {
-        alert(err.message || 'Failed to save board');
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to save board';
+        alert(errorMessage);
       }
     }
   };
