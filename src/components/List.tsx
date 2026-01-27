@@ -1,7 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import type { ListWithCards as ListType, Card } from '../types';
 import ListCard from './ListCard';
 import { Droppable, Draggable } from '@hello-pangea/dnd';
+import { useClickOutside } from '../hooks/useClickOutside';
 
 interface ListProps {
   list: ListType;
@@ -22,13 +23,11 @@ const List: React.FC<ListProps> = ({ list, index, onAddCard, onEditCard, onDelet
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setIsMenuOpen(false);
-      }
-    };
+  // Use custom hook for click-outside detection
+  useClickOutside(menuRef, useCallback(() => setIsMenuOpen(false), []), isMenuOpen);
 
+  // Keep menu positioning logic for scroll events
+  useEffect(() => {
     const updateMenuPosition = () => {
       if (menuRef.current && isMenuOpen) {
         const button = menuRef.current.querySelector('button');
@@ -41,13 +40,11 @@ const List: React.FC<ListProps> = ({ list, index, onAddCard, onEditCard, onDelet
     };
 
     if (isMenuOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
       document.addEventListener('scroll', updateMenuPosition, true);
       updateMenuPosition();
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('scroll', updateMenuPosition, true);
     };
   }, [isMenuOpen]);

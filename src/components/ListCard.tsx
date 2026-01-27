@@ -1,7 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import type { Card } from '../types';
 import { Draggable } from '@hello-pangea/dnd';
 import { useConfirm } from '../contexts/ConfirmContext';
+import { useClickOutside } from '../hooks/useClickOutside';
 
 interface ListCardProps {
   card: Card;
@@ -38,21 +39,8 @@ const ListCard: React.FC<ListCardProps> = ({ card, index, onEdit, onDelete }) =>
   const [editDescription, setEditDescription] = useState(card.description || '');
   const menuRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setIsMenuOpen(false);
-      }
-    };
-
-    if (isMenuOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isMenuOpen]);
+  // Use custom hook instead of duplicated useEffect
+  useClickOutside(menuRef, useCallback(() => setIsMenuOpen(false), []), isMenuOpen);
 
   const handleMenuClick = (e: React.MouseEvent) => {
     e.stopPropagation();

@@ -1,7 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import ChangePasswordModal from './ChangePasswordModal';
+import { useClickOutside } from '../hooks/useClickOutside';
 import '../styles/auth.css';
 
 interface NavbarProps {
@@ -17,6 +18,9 @@ const Navbar: React.FC<NavbarProps> = ({ username, onActivityClick, activityCoun
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
+
+  // Use custom hook for click-outside detection
+  useClickOutside(userMenuRef, useCallback(() => setIsUserMenuOpen(false), []), isUserMenuOpen);
 
   const handleLogout = () => {
     logout();
@@ -35,23 +39,6 @@ const Navbar: React.FC<NavbarProps> = ({ username, onActivityClick, activityCoun
     setIsUserMenuOpen(false);
     setIsChangePasswordOpen(true);
   };
-
-  // Close user menu when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
-        setIsUserMenuOpen(false);
-      }
-    };
-
-    if (isUserMenuOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isUserMenuOpen]);
 
   return (
     <nav className="navbar">
