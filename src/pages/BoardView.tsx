@@ -8,6 +8,7 @@ import { DragDropContext, Droppable } from '@hello-pangea/dnd';
 import type { DropResult, DroppableProvided, DroppableStateSnapshot } from '@hello-pangea/dnd';
 import { useAuth } from '../contexts/AuthContext';
 import { useNotification } from '../contexts/NotificationContext';
+import { useConfirm } from '../contexts/ConfirmContext';
 import { apiClient } from '../utils/apiClient';
 import { withRetry } from '../utils/retry';
 import { API_CONFIG } from '../config/api.config';
@@ -20,6 +21,7 @@ import type {
 const BoardView: React.FC = () => {
   const { user } = useAuth();
   const { showError } = useNotification();
+  const { confirm } = useConfirm();
   const { boardId } = useParams<{ boardId: string }>();
   const [lists, setLists] = useState<LocalList[]>([]);
   const [board, setBoard] = useState<LocalBoard | null>(null);
@@ -135,7 +137,15 @@ const BoardView: React.FC = () => {
   };
 
   const handleDeleteList = async (listId: number) => {
-    if (window.confirm('Are you sure you want to delete this list?')) {
+    const confirmed = await confirm({
+      title: 'Delete List',
+      message: 'Are you sure you want to delete this list? All cards in this list will be permanently removed.',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      type: 'danger'
+    });
+
+    if (confirmed) {
       try {
         await apiClient.delete(API_CONFIG.ENDPOINTS.LISTS.DELETE(listId));
         setLists(lists.filter(list => list.id !== listId));

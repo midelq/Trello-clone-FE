@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import type { Card } from '../types';
 import { Draggable } from '@hello-pangea/dnd';
+import { useConfirm } from '../contexts/ConfirmContext';
 
 interface ListCardProps {
   card: Card;
@@ -30,6 +31,7 @@ const formatDate = (dateString: string) => {
 };
 
 const ListCard: React.FC<ListCardProps> = ({ card, index, onEdit, onDelete }) => {
+  const { confirm } = useConfirm();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(card.title);
@@ -57,12 +59,21 @@ const ListCard: React.FC<ListCardProps> = ({ card, index, onEdit, onDelete }) =>
     setIsMenuOpen(!isMenuOpen);
   };
 
-  const handleDelete = (e: React.MouseEvent) => {
+  const handleDelete = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (window.confirm('Are you sure you want to delete this card?')) {
+    setIsMenuOpen(false);
+
+    const confirmed = await confirm({
+      title: 'Delete Card',
+      message: `Are you sure you want to delete "${card.title}"? This action cannot be undone.`,
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      type: 'danger'
+    });
+
+    if (confirmed) {
       onDelete(card.id);
     }
-    setIsMenuOpen(false);
   };
 
   const handleStartEdit = () => {

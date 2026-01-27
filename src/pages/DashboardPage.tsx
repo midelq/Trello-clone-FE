@@ -6,6 +6,7 @@ import FearGreedIndex from '../components/FearGreedIndex';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../contexts/AuthContext';
 import { useNotification } from '../contexts/NotificationContext';
+import { useConfirm } from '../contexts/ConfirmContext';
 import { apiClient } from '../utils/apiClient';
 import { API_CONFIG } from '../config/api.config';
 import type { Board, BoardsResponse, BoardResponse } from '../types/api.types';
@@ -14,6 +15,7 @@ import '../styles/auth.css';
 const DashboardPage: React.FC = () => {
   const { user } = useAuth();
   const { showError } = useNotification();
+  const { confirm } = useConfirm();
   const [isCreating, setIsCreating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editingBoardId, setEditingBoardId] = useState<number | null>(null);
@@ -59,7 +61,15 @@ const DashboardPage: React.FC = () => {
   };
 
   const handleDeleteBoard = async (boardId: number) => {
-    if (window.confirm('Are you sure you want to delete this board?')) {
+    const confirmed = await confirm({
+      title: 'Delete Board',
+      message: 'Are you sure you want to delete this board? All lists and cards will be permanently removed.',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      type: 'danger'
+    });
+
+    if (confirmed) {
       try {
         await apiClient.delete(API_CONFIG.ENDPOINTS.BOARDS.DELETE(boardId));
         setBoards(boards.filter(board => board.id !== boardId));

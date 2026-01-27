@@ -90,6 +90,8 @@ export class ApiClient {
           if (token) {
             retryFn().then(resolve).catch(reject);
           } else {
+            // Redirect to login when session is completely expired
+            this.redirectToLogin();
             reject(new Error('Session expired. Please login again.'));
           }
         });
@@ -103,12 +105,26 @@ export class ApiClient {
       onTokenRefreshed(newToken);
 
       if (!newToken) {
+        // Redirect to login when refresh token is also expired
+        this.redirectToLogin();
         throw new Error('Session expired. Please login again.');
       }
 
       return retryFn();
     } finally {
       isRefreshing = false;
+    }
+  }
+
+  // Redirect to login page when session expires
+  private redirectToLogin(): void {
+    // Clear any remaining state
+    this.clearToken();
+
+    // Only redirect if not already on auth pages
+    const currentPath = window.location.pathname;
+    if (currentPath !== '/' && currentPath !== '/login' && currentPath !== '/register') {
+      window.location.href = '/';
     }
   }
 

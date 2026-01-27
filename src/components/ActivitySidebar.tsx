@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Activity } from '../types';
+import { useConfirm } from '../contexts/ConfirmContext';
 
 interface ActivitySidebarProps {
   activities: Activity[];
@@ -8,6 +9,23 @@ interface ActivitySidebarProps {
 }
 
 const ActivitySidebar: React.FC<ActivitySidebarProps> = ({ activities, isOpen, onClose }) => {
+  const { confirm } = useConfirm();
+
+  const handleClearHistory = async () => {
+    const confirmed = await confirm({
+      title: 'Clear Activity History',
+      message: 'Are you sure you want to clear all activity history? This action cannot be undone.',
+      confirmText: 'Clear All',
+      cancelText: 'Cancel',
+      type: 'warning'
+    });
+
+    if (confirmed) {
+      // This would be handled by parent component
+      console.log('Clear history confirmed');
+    }
+  };
+
   const getActivityIcon = (type: Activity['type']) => {
     switch (type) {
       case 'card_added':
@@ -120,11 +138,7 @@ const ActivitySidebar: React.FC<ActivitySidebarProps> = ({ activities, isOpen, o
           {/* Footer */}
           <div className="p-4 border-t border-white/20 bg-black/10">
             <button
-              onClick={() => {
-                if (window.confirm('Are you sure you want to clear all activity history?')) {
-                  // This would be handled by parent component
-                }
-              }}
+              onClick={handleClearHistory}
               className="w-full py-3 px-4 text-sm text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-200 font-medium flex items-center justify-center gap-2 border border-white/20"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
