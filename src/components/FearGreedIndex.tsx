@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { REFRESH_INTERVALS } from '../constants';
 
 interface FearGreedData {
   value: string;
@@ -25,7 +26,7 @@ const FearGreedIndex: React.FC = () => {
     };
 
     fetchFearGreedIndex();
-    const interval = setInterval(fetchFearGreedIndex, 300000); 
+    const interval = setInterval(fetchFearGreedIndex, REFRESH_INTERVALS.FEAR_GREED);
 
     return () => clearInterval(interval);
   }, []);

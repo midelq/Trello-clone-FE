@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { REFRESH_INTERVALS } from '../constants';
 
 interface CryptoPrices {
   bitcoin: { usd: number, usd_24h_change: number };
@@ -25,8 +26,8 @@ const CryptoPrices: React.FC = () => {
     // Fetch initial prices
     fetchCryptoPrices();
 
-    // Update prices every 60 seconds
-    const interval = setInterval(fetchCryptoPrices, 60000);
+    // Update prices every minute
+    const interval = setInterval(fetchCryptoPrices, REFRESH_INTERVALS.CRYPTO_PRICES);
 
     return () => clearInterval(interval);
   }, []);
@@ -43,7 +44,7 @@ const CryptoPrices: React.FC = () => {
     const isPositive = change > 0;
     const color = isPositive ? 'text-green-400' : 'text-red-400';
     const arrow = isPositive ? '↑' : '↓';
-    
+
     return (
       <span className={`${color} ml-2`}>
         {arrow} {Math.abs(change).toFixed(2)}%
