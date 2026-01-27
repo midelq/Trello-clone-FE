@@ -9,6 +9,7 @@ import type { DropResult, DroppableProvided, DroppableStateSnapshot } from '@hel
 import { useAuth } from '../contexts/AuthContext';
 import { useNotification } from '../contexts/NotificationContext';
 import { apiClient } from '../utils/apiClient';
+import { withRetry } from '../utils/retry';
 import { API_CONFIG } from '../config/api.config';
 import type {
   ListResponse,
@@ -231,13 +232,16 @@ const BoardView: React.FC = () => {
       newLists.splice(destination.index, 0, movedList);
       setLists(newLists);
 
-      // Update position in backend
+      // Update position in backend with retry
       try {
-        await apiClient.put(API_CONFIG.ENDPOINTS.LISTS.UPDATE(movedList.id), {
-          position: destination.index
-        });
+        await withRetry(
+          () => apiClient.put(API_CONFIG.ENDPOINTS.LISTS.UPDATE(movedList.id), {
+            position: destination.index
+          }),
+          { maxRetries: 3, delayMs: 500 }
+        );
       } catch (err) {
-        // Revert to previous state
+        // Revert to previous state after all retries failed
         setLists(previousLists);
         showError('Failed to move list. Please try again.');
       }
@@ -260,11 +264,14 @@ const BoardView: React.FC = () => {
         setLists(lists.map(list => list.id === newList.id ? newList : list));
 
         try {
-          await apiClient.put(API_CONFIG.ENDPOINTS.CARDS.UPDATE(movedCard.id), {
-            position: destination.index
-          });
+          await withRetry(
+            () => apiClient.put(API_CONFIG.ENDPOINTS.CARDS.UPDATE(movedCard.id), {
+              position: destination.index
+            }),
+            { maxRetries: 3, delayMs: 500 }
+          );
         } catch (err) {
-          // Revert to previous state
+          // Revert to previous state after all retries failed
           setLists(previousLists);
           showError('Failed to reorder card. Please try again.');
         }
@@ -282,12 +289,15 @@ const BoardView: React.FC = () => {
         }));
 
         try {
-          await apiClient.put(API_CONFIG.ENDPOINTS.CARDS.UPDATE(movedCard.id), {
-            listId: destList.id,
-            position: destination.index
-          });
+          await withRetry(
+            () => apiClient.put(API_CONFIG.ENDPOINTS.CARDS.UPDATE(movedCard.id), {
+              listId: destList.id,
+              position: destination.index
+            }),
+            { maxRetries: 3, delayMs: 500 }
+          );
         } catch (err) {
-          // Revert to previous state
+          // Revert to previous state after all retries failed
           setLists(previousLists);
           showError('Failed to move card. Please try again.');
         }
