@@ -7,6 +7,8 @@ export const API_CONFIG = {
     AUTH: {
       LOGIN: '/api/auth/login',
       REGISTER: '/api/auth/register',
+      REFRESH: '/api/auth/refresh',
+      LOGOUT: '/api/auth/logout',
       ME: '/api/auth/me',
       CHANGE_PASSWORD: '/api/auth/change-password',
     },

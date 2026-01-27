@@ -25,7 +25,13 @@ export interface User {
 export interface AuthResponse {
   message: string;
   user: User;
-  token: string;
+  accessToken: string; // Changed from 'token' to 'accessToken'
+}
+
+// Відповідь при refresh token
+export interface RefreshResponse {
+  user: User;
+  accessToken: string;
 }
 
 // Запит на login
