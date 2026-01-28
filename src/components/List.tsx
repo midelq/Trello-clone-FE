@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import type { ListWithCards as ListType, Card } from '../types';
 import ListCard from './ListCard';
 import { Droppable, Draggable } from '@hello-pangea/dnd';
@@ -49,6 +49,15 @@ const List: React.FC<ListProps> = React.memo(({ list, index, onAddCard, onEditCa
       danger: true
     }
   ], [list.id, onDeleteList]);
+
+  // Memoize card handlers to prevent new function instances on every render
+  const handleEditCardWrapper = useCallback((editedCard: Card) => {
+    onEditCard(list.id, editedCard);
+  }, [list.id, onEditCard]);
+
+  const handleDeleteCardWrapper = useCallback((cardId: number) => {
+    onDeleteCard(list.id, cardId);
+  }, [list.id, onDeleteCard]);
 
   return (
     <Draggable draggableId={list.id.toString()} index={index}>
@@ -116,8 +125,8 @@ const List: React.FC<ListProps> = React.memo(({ list, index, onAddCard, onEditCa
                     key={card.id}
                     card={card}
                     index={index}
-                    onEdit={(editedCard) => onEditCard(list.id, editedCard)}
-                    onDelete={(cardId) => onDeleteCard(list.id, cardId)}
+                    onEdit={handleEditCardWrapper}
+                    onDelete={handleDeleteCardWrapper}
                   />
                 ))}
                 {provided.placeholder}
