@@ -129,71 +129,29 @@ const NotificationContainer: React.FC = () => {
     if (notifications.length === 0) return null;
 
     return (
-        <div style={{
-            position: 'fixed',
-            top: '80px',
-            right: '20px',
-            zIndex: 9999,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '12px',
-            maxWidth: '400px'
-        }}>
+        <div className="fixed top-20 right-5 z-[9999] flex flex-col gap-3 max-w-[400px]">
             {notifications.map((notification) => {
                 const styles = getStyles(notification.type);
                 return (
                     <div
                         key={notification.id}
-                        style={{
-                            background: styles.background,
-                            borderRadius: '12px',
-                            padding: '16px',
-                            color: 'white',
-                            boxShadow: '0 10px 40px rgba(0, 0, 0, 0.3)',
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                            gap: '12px',
-                            animation: 'slideIn 0.3s ease-out',
-                            border: '1px solid rgba(255, 255, 255, 0.2)'
-                        }}
+                        className="rounded-xl p-4 text-white shadow-[0_10px_40px_rgba(0,0,0,0.3)] flex items-start gap-3 animate-[slideIn_0.3s_ease-out] border border-white/20"
+                        style={{ background: styles.background }}
                     >
-                        <div style={{
-                            background: styles.iconBg,
-                            borderRadius: '8px',
-                            padding: '8px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            flexShrink: 0
-                        }}>
+                        <div
+                            className="rounded-lg p-2 flex items-center justify-center flex-shrink-0"
+                            style={{ background: styles.iconBg }}
+                        >
                             {getIcon(notification.type)}
                         </div>
-                        <div style={{ flex: 1, paddingTop: '2px' }}>
-                            <p style={{
-                                margin: 0,
-                                fontSize: '14px',
-                                fontWeight: 500,
-                                lineHeight: 1.5
-                            }}>
+                        <div className="flex-1 pt-0.5">
+                            <p className="m-0 text-sm font-medium leading-relaxed">
                                 {notification.message}
                             </p>
                         </div>
                         <button
                             onClick={() => removeNotification(notification.id)}
-                            style={{
-                                background: 'rgba(255, 255, 255, 0.2)',
-                                border: 'none',
-                                borderRadius: '6px',
-                                padding: '4px',
-                                cursor: 'pointer',
-                                color: 'white',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                transition: 'background 0.2s'
-                            }}
-                            onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)'}
-                            onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'}
+                            className="bg-white/20 border-none rounded-md p-1 cursor-pointer text-white flex items-center justify-center transition-colors hover:bg-white/30"
                         >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

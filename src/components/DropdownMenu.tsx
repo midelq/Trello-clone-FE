@@ -91,7 +91,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
         <div className={`relative ${className}`} ref={menuRef}>
             {/* Trigger Button */}
             {trigger ? (
-                <div onClick={handleToggle} style={{ cursor: 'pointer' }}>
+                <div onClick={handleToggle} className="cursor-pointer">
                     {trigger}
                 </div>
             ) : (
@@ -110,10 +110,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
             {isOpen && (
                 <div
                     role="menu"
-                    className={`absolute ${positionClass} mt-2 min-w-[160px] rounded-lg bg-white shadow-lg z-50 overflow-hidden`}
-                    style={{
-                        animation: 'dropdownFadeIn 0.15s ease-out'
-                    }}
+                    className={`absolute ${positionClass} mt-2 min-w-[160px] rounded-lg bg-white shadow-lg z-50 overflow-hidden animate-[dropdownFadeIn_0.15s_ease-out]`}
                 >
                     <div className="py-1">
                         {items.map((item, index) => (

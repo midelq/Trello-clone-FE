@@ -99,7 +99,7 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
             {/* Confirmation Modal */}
             {isOpen && options && (
                 <div
-                    className="confirm-overlay"
+                    className="confirm-overlay fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[10000] animate-[fadeIn_0.2s_ease-out]"
                     onClick={handleCancel}
                     onKeyDown={handleKeyDown}
                     role="dialog"
@@ -107,47 +107,15 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
                     aria-labelledby="confirm-title"
                     aria-describedby="confirm-message"
                     tabIndex={-1}
-                    style={{
-                        position: 'fixed',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        backgroundColor: 'rgba(0, 0, 0, 0.6)',
-                        backdropFilter: 'blur(4px)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        zIndex: 10000,
-                        animation: 'fadeIn 0.2s ease-out'
-                    }}
                 >
                     <div
-                        className="confirm-modal"
+                        className="confirm-modal bg-[#1e293b] rounded-2xl p-6 max-w-[400px] w-[90%] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.1)] animate-[slideUp_0.3s_ease-out]"
                         onClick={(e) => e.stopPropagation()}
-                        style={{
-                            backgroundColor: '#1e293b',
-                            borderRadius: '16px',
-                            padding: '24px',
-                            maxWidth: '400px',
-                            width: '90%',
-                            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1)',
-                            animation: 'slideUp 0.3s ease-out'
-                        }}
                     >
                         {/* Icon */}
                         <div
-                            style={{
-                                width: '56px',
-                                height: '56px',
-                                borderRadius: '50%',
-                                backgroundColor: typeStyles.iconBg,
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                margin: '0 auto 16px',
-                                fontSize: '24px'
-                            }}
+                            className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl"
+                            style={{ backgroundColor: typeStyles.iconBg }}
                         >
                             {typeStyles.icon}
                         </div>
@@ -155,13 +123,7 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
                         {/* Title */}
                         <h2
                             id="confirm-title"
-                            style={{
-                                color: '#f1f5f9',
-                                fontSize: '20px',
-                                fontWeight: 600,
-                                textAlign: 'center',
-                                margin: '0 0 8px'
-                            }}
+                            className="text-slate-100 text-xl font-semibold text-center m-0 mb-2"
                         >
                             {options.title}
                         </h2>
@@ -169,48 +131,17 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
                         {/* Message */}
                         <p
                             id="confirm-message"
-                            style={{
-                                color: '#94a3b8',
-                                fontSize: '14px',
-                                textAlign: 'center',
-                                margin: '0 0 24px',
-                                lineHeight: 1.5
-                            }}
+                            className="text-slate-400 text-sm text-center m-0 mb-6 leading-relaxed"
                         >
                             {options.message}
                         </p>
 
                         {/* Buttons */}
-                        <div
-                            style={{
-                                display: 'flex',
-                                gap: '12px',
-                                justifyContent: 'center'
-                            }}
-                        >
+                        <div className="flex gap-3 justify-center">
                             {/* Cancel Button */}
                             <button
                                 onClick={handleCancel}
-                                style={{
-                                    flex: 1,
-                                    padding: '12px 20px',
-                                    borderRadius: '10px',
-                                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                                    color: '#cbd5e1',
-                                    fontSize: '14px',
-                                    fontWeight: 500,
-                                    cursor: 'pointer',
-                                    transition: 'all 0.2s ease'
-                                }}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-                                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
-                                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-                                }}
+                                className="flex-1 py-3 px-5 rounded-xl border border-white/10 bg-white/5 text-slate-300 text-sm font-medium cursor-pointer transition-all hover:bg-white/10 hover:border-white/20"
                             >
                                 {options.cancelText || 'Cancel'}
                             </button>
@@ -219,29 +150,8 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
                             <button
                                 onClick={handleConfirm}
                                 autoFocus
-                                style={{
-                                    flex: 1,
-                                    padding: '12px 20px',
-                                    borderRadius: '10px',
-                                    border: 'none',
-                                    background: typeStyles.confirmBg,
-                                    color: 'white',
-                                    fontSize: '14px',
-                                    fontWeight: 600,
-                                    cursor: 'pointer',
-                                    transition: 'all 0.2s ease',
-                                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)'
-                                }}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.background = typeStyles.confirmHoverBg;
-                                    e.currentTarget.style.transform = 'translateY(-1px)';
-                                    e.currentTarget.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.4)';
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.background = typeStyles.confirmBg;
-                                    e.currentTarget.style.transform = 'translateY(0)';
-                                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.3)';
-                                }}
+                                className="flex-1 py-3 px-5 rounded-xl border-none text-white text-sm font-semibold cursor-pointer transition-all shadow-[0_4px_12px_rgba(0,0,0,0.3)] hover:-translate-y-0.5 hover:shadow-[0_6px_16px_rgba(0,0,0,0.4)]"
+                                style={{ background: typeStyles.confirmBg }}
                             >
                                 {options.confirmText || 'Confirm'}
                             </button>

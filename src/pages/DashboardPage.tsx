@@ -150,7 +150,7 @@ const DashboardPage: React.FC = () => {
             </div>
 
             <div className="dashboard-content">
-              {error && <div className="error-message" style={{ color: 'red', marginBottom: '1rem' }}>{error}</div>}
+              {error && <div className="error-message text-red-500 mb-4">{error}</div>}
 
               {isLoading ? (
                 <div className="loading-spinner">Loading boards...</div>

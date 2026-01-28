@@ -70,7 +70,7 @@ const Navbar: React.FC<NavbarProps> = ({ username, onActivityClick, activityCoun
           )}
 
           {/* User Menu Container */}
-          <div ref={userMenuRef} style={{ position: 'relative' }}>
+          <div ref={userMenuRef} className="relative">
             <button
               onClick={toggleUserMenu}
               className={`user-menu-button ${isUserMenuOpen ? 'active' : ''}`}
@@ -86,10 +86,7 @@ const Navbar: React.FC<NavbarProps> = ({ username, onActivityClick, activityCoun
                 height="16"
                 fill="currentColor"
                 viewBox="0 0 16 16"
-                style={{
-                  transform: isUserMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                  transition: 'transform 0.2s'
-                }}
+                className={`transition-transform duration-200 ${isUserMenuOpen ? 'rotate-180' : 'rotate-0'}`}
               >
                 <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
               </svg>

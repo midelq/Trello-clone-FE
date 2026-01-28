@@ -199,7 +199,7 @@ export default function LoginPage() {
             {isLoading ? 'Loading...' : (isLogin ? 'Sign In' : 'Create Account')}
           </button>
         </form>
-        {message && <p className="auth-message" style={{ color: message.includes('success') ? 'green' : 'red' }}>{message}</p>}
+        {message && <p className={`auth-message ${message.includes('success') ? 'text-green-500' : 'text-red-500'}`}>{message}</p>}
       </div>
     </div>
   );

@@ -79,11 +79,8 @@ const ActivitySidebar: React.FC<ActivitySidebarProps> = ({ activities, isOpen, o
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 right-0 h-full w-96 shadow-2xl z-50 transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'
+        className={`fixed top-0 right-0 h-full w-96 shadow-2xl z-50 transform transition-transform duration-300 ease-in-out bg-gradient-to-br from-[#667eea] to-[#764ba2] ${isOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
-        style={{
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-        }}
       >
         <div className="h-full flex flex-col">
           {/* Header */}
