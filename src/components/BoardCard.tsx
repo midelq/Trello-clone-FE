@@ -9,7 +9,7 @@ interface BoardCardProps {
   onDelete?: () => void;
 }
 
-const BoardCard: React.FC<BoardCardProps> = ({
+const BoardCard: React.FC<BoardCardProps> = React.memo(({
   id,
   title,
   updatedAt,
@@ -89,6 +89,6 @@ const BoardCard: React.FC<BoardCardProps> = ({
       </div>
     </div>
   );
-};
+});
 
 export default BoardCard;

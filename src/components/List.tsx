@@ -14,7 +14,7 @@ interface ListProps {
   onDeleteList: (listId: number) => void;
 }
 
-const List: React.FC<ListProps> = ({ list, index, onAddCard, onEditCard, onDeleteCard, onEditTitle, onDeleteList }) => {
+const List: React.FC<ListProps> = React.memo(({ list, index, onAddCard, onEditCard, onDeleteCard, onEditTitle, onDeleteList }) => {
   const [isAddingCard, setIsAddingCard] = useState(false);
   const [newCardTitle, setNewCardTitle] = useState('');
   const [newCardDescription, setNewCardDescription] = useState('');
@@ -171,6 +171,15 @@ const List: React.FC<ListProps> = ({ list, index, onAddCard, onEditCard, onDelet
       )}
     </Draggable>
   );
-};
+}, (prevProps, nextProps) => {
+  // Custom comparison - re-render only when list data or index changes
+  return (
+    prevProps.list.id === nextProps.list.id &&
+    prevProps.list.title === nextProps.list.title &&
+    prevProps.list.cards.length === nextProps.list.cards.length &&
+    prevProps.list.cards === nextProps.list.cards &&
+    prevProps.index === nextProps.index
+  );
+});
 
 export default List;

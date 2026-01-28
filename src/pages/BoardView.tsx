@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import type { Board as LocalBoard, ListWithCards as LocalList, Card as LocalCard, Activity } from '../types';
 import List from '../components/List';
@@ -114,7 +114,7 @@ const BoardView: React.FC = () => {
     }
   };
 
-  const handleEditListTitle = async (listId: number, newTitle: string) => {
+  const handleEditListTitle = useCallback(async (listId: number, newTitle: string) => {
     const trimmedTitle = newTitle.trim();
     if (!trimmedTitle) return;
 
@@ -134,9 +134,9 @@ const BoardView: React.FC = () => {
       showError(errorMessage);
       // Optionally, we could refetch board data here to restore correct state
     }
-  };
+  }, [showError]);
 
-  const handleDeleteList = async (listId: number) => {
+  const handleDeleteList = useCallback(async (listId: number) => {
     const confirmed = await confirm({
       title: 'Delete List',
       message: 'Are you sure you want to delete this list? All cards in this list will be permanently removed.',
@@ -154,9 +154,9 @@ const BoardView: React.FC = () => {
         showError(errorMessage);
       }
     }
-  };
+  }, [confirm, lists, showError]);
 
-  const handleAddCard = async (listId: number, cardData: Partial<LocalCard>) => {
+  const handleAddCard = useCallback(async (listId: number, cardData: Partial<LocalCard>) => {
     try {
       const list = lists.find(l => l.id === listId);
       if (!list) return;
@@ -187,9 +187,9 @@ const BoardView: React.FC = () => {
       const errorMessage = err instanceof Error ? err.message : 'Failed to create card';
       showError(errorMessage);
     }
-  };
+  }, [lists, showError]);
 
-  const handleEditCard = async (listId: number, editedCard: LocalCard) => {
+  const handleEditCard = useCallback(async (listId: number, editedCard: LocalCard) => {
     try {
       await apiClient.put(API_CONFIG.ENDPOINTS.CARDS.UPDATE(editedCard.id), {
         title: editedCard.title,
@@ -210,9 +210,9 @@ const BoardView: React.FC = () => {
       const errorMessage = err instanceof Error ? err.message : 'Failed to update card';
       showError(errorMessage);
     }
-  };
+  }, [lists, showError]);
 
-  const handleDeleteCard = async (listId: number, cardId: number) => {
+  const handleDeleteCard = useCallback(async (listId: number, cardId: number) => {
     try {
       await apiClient.delete(API_CONFIG.ENDPOINTS.CARDS.DELETE(cardId));
 
@@ -225,9 +225,9 @@ const BoardView: React.FC = () => {
       const errorMessage = err instanceof Error ? err.message : 'Failed to delete card';
       showError(errorMessage);
     }
-  };
+  }, [showError]);
 
-  const handleDragEnd = async (result: DropResult) => {
+  const handleDragEnd = useCallback(async (result: DropResult) => {
     const { destination, source, type } = result;
 
     if (!destination) return;
@@ -313,7 +313,7 @@ const BoardView: React.FC = () => {
         }
       }
     }
-  };
+  }, [lists, showError]);
 
   if (isLoading) {
     return <div className="flex justify-center items-center h-screen text-white">Loading board...</div>;

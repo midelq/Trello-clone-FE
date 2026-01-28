@@ -31,7 +31,7 @@ const formatDate = (dateString: string) => {
   });
 };
 
-const ListCard: React.FC<ListCardProps> = ({ card, index, onEdit, onDelete }) => {
+const ListCard: React.FC<ListCardProps> = React.memo(({ card, index, onEdit, onDelete }) => {
   const { confirm } = useConfirm();
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(card.title);
@@ -146,6 +146,14 @@ const ListCard: React.FC<ListCardProps> = ({ card, index, onEdit, onDelete }) =>
       )}
     </Draggable>
   );
-};
+}, (prevProps, nextProps) => {
+  // Custom comparison - only re-render if card data or index changes
+  return (
+    prevProps.card.id === nextProps.card.id &&
+    prevProps.card.title === nextProps.card.title &&
+    prevProps.card.description === nextProps.card.description &&
+    prevProps.index === nextProps.index
+  );
+});
 
 export default ListCard;
