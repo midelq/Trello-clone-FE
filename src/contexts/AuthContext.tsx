@@ -16,6 +16,11 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+/**
+ * Authentication provider component that manages user authentication state.
+ * Handles login, register, logout, and password change operations.
+ * @param children - Child components to wrap with auth context
+ */
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -54,18 +59,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         initializeAuth();
     }, [initializeAuth]);
 
+    /**
+     * Authenticates a user with email and password.
+     * @param data - Login credentials
+     * @throws Error if login fails
+     */
     const login = async (data: LoginRequest) => {
         const response = await apiClient.post<AuthResponse>(API_CONFIG.ENDPOINTS.AUTH.LOGIN, data, false);
         apiClient.setToken(response.accessToken);
         setUser(response.user);
     };
 
+    /**
+     * Registers a new user account.
+     * @param data - Registration data including name, email, and password
+     * @throws Error if registration fails
+     */
     const register = async (data: RegisterRequest) => {
         const response = await apiClient.post<AuthResponse>(API_CONFIG.ENDPOINTS.AUTH.REGISTER, data, false);
         apiClient.setToken(response.accessToken);
         setUser(response.user);
     };
 
+    /**
+     * Logs out the current user and clears all tokens.
+     */
     const logout = async () => {
         try {
             // Call logout endpoint to clear the refresh token cookie
@@ -82,6 +100,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
     };
 
+    /**
+     * Changes the current user's password and logs them out.
+     * @param data - Current and new password
+     * @throws Error if password change fails
+     */
     const changePassword = async (data: ChangePasswordRequest) => {
         await apiClient.post<ChangePasswordResponse>(API_CONFIG.ENDPOINTS.AUTH.CHANGE_PASSWORD, data);
         // After password change, log out the user (backend invalidates all refresh tokens)
@@ -103,6 +126,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     );
 }
 
+/**
+ * Hook to access authentication context.
+ * Must be used within an AuthProvider.
+ * @returns Authentication context with user state and auth methods
+ * @throws Error if used outside of AuthProvider
+ */
 export function useAuth() {
     const context = useContext(AuthContext);
     if (context === undefined) {

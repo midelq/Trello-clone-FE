@@ -19,6 +19,10 @@ const onTokenRefreshed = (token: string | null) => {
   refreshSubscribers = [];
 };
 
+/**
+ * HTTP client for making API requests with automatic token management.
+ * Handles authentication, token refresh, and error handling.
+ */
 export class ApiClient {
   private baseURL: string;
 
@@ -26,17 +30,25 @@ export class ApiClient {
     this.baseURL = API_CONFIG.BASE_URL;
   }
 
-  // Get token from memory
+  /**
+   * Gets the current access token from memory.
+   * @returns The current access token or null if not set
+   */
   getToken(): string | null {
     return accessToken;
   }
 
-  // Set token in memory
+  /**
+   * Sets the access token in memory.
+   * @param token - The access token to store, or null to clear
+   */
   setToken(token: string | null): void {
     accessToken = token;
   }
 
-  // Clear token from memory
+  /**
+   * Clears the access token from memory.
+   */
   clearToken(): void {
     accessToken = null;
   }
@@ -53,7 +65,10 @@ export class ApiClient {
     return headers;
   }
 
-  // Attempt to refresh the access token using the refresh token cookie
+  /**
+   * Attempts to refresh the access token using the refresh token cookie.
+   * @returns The new access token or null if refresh failed
+   */
   async refreshAccessToken(): Promise<string | null> {
     try {
       const response = await fetch(`${this.baseURL}${API_CONFIG.ENDPOINTS.AUTH.REFRESH}`, {
@@ -159,7 +174,13 @@ export class ApiClient {
     throw new Error(`Unexpected non-JSON response with status: ${response.status}`);
   }
 
-
+  /**
+   * Makes a GET request to the specified endpoint.
+   * @param endpoint - The API endpoint to call
+   * @param includeAuth - Whether to include the Authorization header (default: true)
+   * @returns Promise resolving to the response data
+   * @throws Error if the request fails
+   */
   async get<T>(endpoint: string, includeAuth: boolean = true): Promise<T> {
     const makeRequest = async (): Promise<T> => {
       const response = await fetch(`${this.baseURL}${endpoint}`, {
@@ -179,7 +200,14 @@ export class ApiClient {
     }
   }
 
-
+  /**
+   * Makes a POST request to the specified endpoint.
+   * @param endpoint - The API endpoint to call
+   * @param data - The request body data
+   * @param includeAuth - Whether to include the Authorization header (default: true)
+   * @returns Promise resolving to the response data
+   * @throws Error if the request fails
+   */
   async post<T>(
     endpoint: string,
     data?: unknown,
