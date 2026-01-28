@@ -140,10 +140,10 @@ export class ApiClient {
     if (!response.ok) {
       if (isJson) {
         const errorData = (await response.json()) as Partial<ApiError>;
-        const errorMessage = errorData.error || errorData.message || 'Помилка запиту';
+        const errorMessage = errorData.error || errorData.message || 'Request failed';
         throw new Error(errorMessage);
       }
-      throw new Error(`HTTP помилка! статус: ${response.status}`);
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     if (isJson) {

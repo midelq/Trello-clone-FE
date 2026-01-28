@@ -131,7 +131,7 @@ describe('ApiClient', () => {
                 headers: new Headers({ 'content-type': 'text/html' }),
             });
 
-            await expect(apiClient.get('/test', false)).rejects.toThrow('HTTP помилка! статус: 500');
+            await expect(apiClient.get('/test', false)).rejects.toThrow('HTTP error! status: 500');
         });
 
         it('should handle 204 No Content response', async () => {

@@ -21,44 +21,44 @@ export interface User {
   createdAt: string;
 }
 
-// Відповідь при login/register
+// Login/Register response
 export interface AuthResponse {
   message: string;
   user: User;
   accessToken: string; // Changed from 'token' to 'accessToken'
 }
 
-// Відповідь при refresh token
+// Refresh token response
 export interface RefreshResponse {
   user: User;
   accessToken: string;
 }
 
-// Запит на login
+// Login request
 export interface LoginRequest {
   email: string;
   password: string;
 }
 
-// Запит на register
+// Register request
 export interface RegisterRequest {
   fullName: string;
   email: string;
   password: string;
 }
 
-// Відповідь на /api/auth/me
+// Response for /api/auth/me
 export interface MeResponse {
   user: User;
 }
 
-// Запит на зміну паролю
+// Change password request
 export interface ChangePasswordRequest {
   currentPassword: string;
   newPassword: string;
 }
 
-// Відповідь на зміну паролю
+// Change password response
 export interface ChangePasswordResponse {
   message: string;
 }
@@ -76,23 +76,23 @@ export interface Board {
   updatedAt: string;
 }
 
-// Створення нової дошки
+// Create new board request
 export interface CreateBoardRequest {
   title: string;
 }
 
-// Оновлення дошки
+// Update board request
 export interface UpdateBoardRequest {
   title?: string;
 }
 
-// Відповідь при створенні/оновленні
+// Create/Update board response
 export interface BoardResponse {
   message: string;
   board: Board;
 }
 
-// Відповідь при отриманні всіх дошок
+// Get all boards response
 export interface BoardsResponse {
   boards: Board[];
 }
@@ -122,26 +122,26 @@ export interface ListWithCards extends List {
   cards: Card[];
 }
 
-// Створення нового списку
+// Create new list request
 export interface CreateListRequest {
   title: string;
   boardId: number;
   position?: number;
 }
 
-// Оновлення списку
+// Update list request
 export interface UpdateListRequest {
   title?: string;
   position?: number;
 }
 
-// Відповідь при створенні/оновленні
+// Create/Update list response
 export interface ListResponse {
   message: string;
   list: List;
 }
 
-// Відповідь при отриманні списків дошки
+// Get board lists response
 export interface ListsResponse {
   lists: List[];
 }
@@ -160,7 +160,7 @@ export interface Card {
   updatedAt: string;
 }
 
-// Створення нової картки
+// Create new card request
 export interface CreateCardRequest {
   title: string;
   listId: number;
@@ -168,15 +168,15 @@ export interface CreateCardRequest {
   position?: number;
 }
 
-// Оновлення картки
+// Update card request
 export interface UpdateCardRequest {
   title?: string;
   description?: string | null;
   position?: number;
-  listId?: number; // для переміщення між списками
+  listId?: number; // for moving between lists
 }
 
-// Відповідь при створенні/оновленні
+// Create/Update card response
 export interface CardResponse {
   message: string;
   card: Card;
